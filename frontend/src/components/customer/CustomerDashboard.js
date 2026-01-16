@@ -116,7 +116,7 @@ export default function CustomerDashboard({ customer, onNavigate, onLogout }) {
                 </div>
                 <div className="text-white">
                   <p className="text-amber-200 text-sm">Total Spent</p>
-                  <p className="text-3xl font-bold">${stats.totalSpent.toFixed(2)}</p>
+                  <p className="text-3xl font-bold">Rs.{stats.totalSpent.toFixed(2)}</p>
                 </div>
               </div>
             </div>

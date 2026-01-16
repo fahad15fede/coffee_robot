@@ -140,21 +140,32 @@ function MenuManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-amber-800 to-amber-900 text-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-4xl font-bold">☕ Coffee Menu Management</h1>
-          <p className="mt-2 text-amber-100">Manage your coffee shop menu items</p>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #fef9e7 0%, #fdf4d9 50%, #fef5dc 100%)' }}>
+      {/* Header - Golden Mustard Theme */}
+      <div className="shadow-md sticky top-0 z-10" style={{ background: 'linear-gradient(90deg, #d4a843 0%, #f5cc5d 50%, #d4a843 100%)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold flex items-center gap-2" style={{ color: '#3d2817' }}>
+                <span className="text-4xl">☕</span>
+                Menu Management
+              </h1>
+              <p className="mt-1 text-sm" style={{ color: '#5c3d2e' }}>Manage your coffee shop menu items</p>
+            </div>
+            <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(61, 40, 23, 0.15)', borderColor: 'rgba(61, 40, 23, 0.3)' }}>
+              <p className="text-xs font-semibold" style={{ color: '#5c3d2e' }}>Total Items</p>
+              <p className="text-2xl font-bold text-center" style={{ color: '#3d2817' }}>{menuItems.length}</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Error Message */}
         {error && (
-          <div className="mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
-            <p className="font-bold">Error</p>
-            <p>{error}</p>
+          <div className="mb-4 border-l-4 p-3 rounded-lg shadow-sm" style={{ backgroundColor: '#fee', borderColor: '#c33', color: '#811' }}>
+            <p className="font-bold text-sm">⚠️ Error</p>
+            <p className="text-sm">{error}</p>
           </div>
         )}
 
@@ -163,7 +174,13 @@ function MenuManagement() {
           <div className="mb-6">
             <button
               onClick={() => setShowAddForm(true)}
-              className="bg-amber-700 hover:bg-amber-800 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center gap-2"
+              className="font-semibold py-3 px-6 rounded-lg shadow-sm transition duration-200 flex items-center gap-2"
+              style={{ 
+                background: 'linear-gradient(135deg, #d4a843 0%, #f5cc5d 100%)',
+                color: '#3d2817'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.background = 'linear-gradient(135deg, #c49a3a 0%, #e5bc4d 100%)'}
+              onMouseOut={(e) => e.currentTarget.style.background = 'linear-gradient(135deg, #d4a843 0%, #f5cc5d 100%)'}
             >
               <span className="text-xl">+</span>
               Add New Menu Item
@@ -173,13 +190,17 @@ function MenuManagement() {
 
         {/* Add/Edit Form */}
         {(showAddForm || editingItem) && (
-          <div className="mb-8 bg-white rounded-lg shadow-lg p-6 border-2 border-amber-200">
-            <h2 className="text-2xl font-bold text-amber-900 mb-4">
+          <div className="mb-6 rounded-lg shadow-md p-5 border" style={{ 
+            background: 'linear-gradient(135deg, #fffef8 0%, #fef9e7 100%)',
+            borderColor: '#f5cc5d'
+          }}>
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2" style={{ color: '#3d2817' }}>
+              <span>{editingItem ? '✏️' : '➕'}</span>
               {editingItem ? 'Edit Menu Item' : 'Add New Menu Item'}
             </h2>
             <form onSubmit={editingItem ? handleUpdateItem : handleAddItem} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-amber-900 mb-1">
+                <label className="block text-sm font-semibold mb-1.5" style={{ color: '#3d2817' }}>
                   Item Name
                 </label>
                 <input
@@ -188,13 +209,16 @@ function MenuManagement() {
                   value={formData.name}
                   onChange={handleInputChange}
                   required={!editingItem}
-                  className="w-full px-4 py-2 border-2 border-amber-300 rounded-lg focus:outline-none focus:border-amber-600"
+                  className="w-full px-3 py-2.5 bg-white rounded-lg focus:outline-none text-sm"
+                  style={{ border: '1px solid #f5cc5d' }}
+                  onFocus={(e) => e.target.style.borderColor = '#d4a843'}
+                  onBlur={(e) => e.target.style.borderColor = '#f5cc5d'}
                   placeholder="e.g., Cappuccino"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-amber-900 mb-1">
+                <label className="block text-sm font-semibold mb-1.5" style={{ color: '#3d2817' }}>
                   Category
                 </label>
                 <input
@@ -203,13 +227,16 @@ function MenuManagement() {
                   value={formData.category}
                   onChange={handleInputChange}
                   required={!editingItem}
-                  className="w-full px-4 py-2 border-2 border-amber-300 rounded-lg focus:outline-none focus:border-amber-600"
+                  className="w-full px-3 py-2.5 bg-white rounded-lg focus:outline-none text-sm"
+                  style={{ border: '1px solid #f5cc5d' }}
+                  onFocus={(e) => e.target.style.borderColor = '#d4a843'}
+                  onBlur={(e) => e.target.style.borderColor = '#f5cc5d'}
                   placeholder="e.g., Hot Drinks"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-amber-900 mb-1">
+                <label className="block text-sm font-semibold mb-1.5" style={{ color: '#3d2817' }}>
                   Price (Rs)
                 </label>
                 <input
@@ -219,23 +246,33 @@ function MenuManagement() {
                   value={formData.price}
                   onChange={handleInputChange}
                   required={!editingItem}
-                  className="w-full px-4 py-2 border-2 border-amber-300 rounded-lg focus:outline-none focus:border-amber-600"
+                  className="w-full px-3 py-2.5 bg-white rounded-lg focus:outline-none text-sm"
+                  style={{ border: '1px solid #f5cc5d' }}
+                  onFocus={(e) => e.target.style.borderColor = '#d4a843'}
+                  onBlur={(e) => e.target.style.borderColor = '#f5cc5d'}
                   placeholder="e.g., 4.50"
                 />
               </div>
               
-              <div className="flex gap-3 pt-2">
+              <div className="flex gap-2 pt-2">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="bg-amber-700 hover:bg-amber-800 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-200 disabled:opacity-50"
+                  className="font-semibold py-2 px-5 rounded-lg shadow-sm transition duration-200 disabled:opacity-50 text-sm"
+                  style={{ 
+                    background: 'linear-gradient(135deg, #d4a843 0%, #f5cc5d 100%)',
+                    color: '#3d2817'
+                  }}
                 >
                   {loading ? 'Saving...' : editingItem ? 'Update Item' : 'Add Item'}
                 </button>
                 <button
                   type="button"
                   onClick={cancelForm}
-                  className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-200"
+                  className="font-semibold py-2 px-5 rounded-lg shadow-sm transition duration-200 text-sm"
+                  style={{ backgroundColor: '#6b5d52', color: 'white' }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#5c4d42'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#6b5d52'}
                 >
                   Cancel
                 </button>
@@ -247,49 +284,83 @@ function MenuManagement() {
         {/* Menu Items Grid */}
         {loading && menuItems.length === 0 ? (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-amber-700 border-t-transparent"></div>
-            <p className="mt-4 text-amber-900">Loading menu items...</p>
+            <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-t-transparent" style={{ borderColor: '#f5cc5d', borderTopColor: 'transparent' }}></div>
+            <p className="mt-3 text-sm" style={{ color: '#3d2817' }}>Loading menu items...</p>
           </div>
         ) : menuItems.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg shadow-md">
-            <p className="text-xl text-gray-600">No menu items yet. Add your first item!</p>
+          <div className="text-center py-12 rounded-lg shadow-sm border" style={{ 
+            background: 'linear-gradient(135deg, #fffef8 0%, #fef9e7 100%)',
+            borderColor: '#f5cc5d'
+          }}>
+            <div className="text-6xl mb-3 opacity-30">☕</div>
+            <p className="text-lg" style={{ color: '#6b5d52' }}>No menu items yet. Add your first item!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {menuItems.map((item) => (
               <div
                 key={item.item_id}
-                className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-amber-200 hover:shadow-xl transition duration-200"
+                className="rounded-lg shadow-md overflow-hidden border hover:shadow-lg transition duration-200"
+                style={{ 
+                  background: 'linear-gradient(135deg, #ffffff 0%, #fefbf0 100%)',
+                  borderColor: '#f5cc5d'
+                }}
               >
-                <div className="bg-gradient-to-r from-amber-600 to-amber-700 px-4 py-3">
-                  <h3 className="text-xl font-bold text-white">{item.item_name}</h3>
+                {/* Card Header */}
+                <div className="px-4 py-3 border-b-2" style={{ 
+                  background: 'linear-gradient(90deg, #d4a843 0%, #f5cc5d 50%, #d4a843 100%)',
+                  borderBottomColor: 'rgba(61, 40, 23, 0.2)'
+                }}>
+                  <h3 className="text-lg font-bold truncate" style={{ color: '#3d2817' }}>{item.item_name}</h3>
                 </div>
                 
+                {/* Card Body */}
                 <div className="p-4">
                   <div className="mb-3">
-                    <span className="inline-block bg-amber-100 text-amber-800 text-sm font-semibold px-3 py-1 rounded-full">
+                    <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full border" style={{ 
+                      backgroundColor: '#fef9e7',
+                      color: '#5c3d2e',
+                      borderColor: '#f5cc5d'
+                    }}>
                       {item.category}
                     </span>
                   </div>
                   
-                  <div className="mb-4">
-                    <span className="text-3xl font-bold text-amber-900">
+                  <div className="mb-4 p-3 rounded-lg border" style={{ 
+                    background: 'linear-gradient(135deg, #fef9e7 0%, #fef5dc 100%)',
+                    borderColor: '#f5cc5d'
+                  }}>
+                    <p className="text-xs font-semibold mb-0.5" style={{ color: '#5c3d2e' }}>Price</p>
+                    <span className="text-2xl font-bold" style={{ color: '#3d2817' }}>
                       Rs {item.price.toFixed(2)}
                     </span>
                   </div>
                   
+                  {/* Action Buttons */}
                   <div className="flex gap-2">
                     <button
                       onClick={() => startEdit(item)}
-                      className="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+                      className="flex-1 font-semibold py-2 px-3 rounded-lg transition duration-200 text-sm shadow-sm"
+                      style={{ 
+                        background: 'linear-gradient(135deg, #d4a843 0%, #f5cc5d 100%)',
+                        color: '#3d2817'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.background = 'linear-gradient(135deg, #c49a3a 0%, #e5bc4d 100%)'}
+                      onMouseOut={(e) => e.currentTarget.style.background = 'linear-gradient(135deg, #d4a843 0%, #f5cc5d 100%)'}
                     >
-                      Edit
+                      ✏️ Edit
                     </button>
                     <button
                       onClick={() => handleDeleteItem(item.item_id)}
-                      className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+                      className="flex-1 font-semibold py-2 px-3 rounded-lg transition duration-200 text-sm shadow-sm"
+                      style={{ 
+                        background: 'linear-gradient(135deg, #c44 0%, #d55 100%)',
+                        color: 'white'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.background = 'linear-gradient(135deg, #b33 0%, #c44 100%)'}
+                      onMouseOut={(e) => e.currentTarget.style.background = 'linear-gradient(135deg, #c44 0%, #d55 100%)'}
                     >
-                      Delete
+                      🗑️ Delete
                     </button>
                   </div>
                 </div>

@@ -29,16 +29,20 @@ export default function PaymentModal({ orderId, totalAmount, onClose, onSuccess 
   const handlePayment = async () => {
     setProcessing(true);
 
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
     try {
+      // Simulate payment processing delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // Mark order as paid
       const response = await fetch(
         `${API_BASE_URL}/orders/${orderId}/pay`,
         { method: 'POST' }
       );
 
-      if (!response.ok) throw new Error('Payment failed');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Payment failed');
+      }
 
       setSuccess(true);
       

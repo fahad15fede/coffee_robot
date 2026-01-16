@@ -138,8 +138,9 @@ class OrderDb:
         if not row:
             return False, "Order not found"
 
-        if row["status"] != "ready":
-            return False, "Order is not ready for payment"
+        # Allow payment from pending or ready status
+        if row["status"] not in ["pending", "ready"]:
+            return False, f"Order cannot be paid. Current status: {row['status']}"
 
         self.cursor.execute(
             """

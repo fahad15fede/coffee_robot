@@ -99,7 +99,7 @@ export default function App() {
       <div>
         <button
           onClick={() => setRole(null)}
-          className="fixed top-4 right-4 z-50 bg-white hover:bg-gray-100 text-amber-900 font-semibold py-2 px-4 rounded-lg shadow-lg border-2 border-amber-300 transition"
+          className="fixed top-2 right-2 sm:top-4 sm:right-4 z-[100] bg-white hover:bg-gray-100 text-amber-900 font-semibold py-2 px-3 sm:py-2 sm:px-4 rounded-lg shadow-lg border-2 border-amber-300 transition text-xs sm:text-sm"
         >
           ← Change Role
         </button>
@@ -113,7 +113,7 @@ export default function App() {
       <div>
         <button
           onClick={() => setRole(null)}
-          className="fixed top-4 right-4 z-50 bg-white hover:bg-gray-100 text-amber-900 font-semibold py-2 px-4 rounded-lg shadow-lg border-2 border-amber-300 transition"
+          className="fixed top-2 right-2 sm:top-4 sm:right-4 z-[100] bg-white hover:bg-gray-100 text-amber-900 font-semibold py-2 px-3 sm:py-2 sm:px-4 rounded-lg shadow-lg border-2 border-amber-300 transition text-xs sm:text-sm"
         >
           ← Change Role
         </button>
