@@ -13,7 +13,7 @@ export default function PaymentHistory({ customer, onBack }) {
 
   useEffect(() => {
     fetchPayments();
-  }, []);
+  }, [customer.customer_id]); // Add customer dependency
 
   const fetchPayments = async () => {
     try {

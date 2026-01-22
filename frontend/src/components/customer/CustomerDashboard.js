@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 const API_BASE_URL = 'http://localhost:8000';
 
@@ -8,9 +8,9 @@ export default function CustomerDashboard({ customer, onNavigate, onLogout }) {
 
   useEffect(() => {
     fetchMyOrders();
-  }, []);
+  }, [fetchMyOrders]);
 
-  const fetchMyOrders = async () => {
+  const fetchMyOrders = useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/orders/`);
       if (response.ok) {
@@ -27,7 +27,7 @@ export default function CustomerDashboard({ customer, onNavigate, onLogout }) {
     } catch (err) {
       console.error('Failed to fetch orders:', err);
     }
-  };
+  }, [customer.customer_id]);
 
   const dashboardCards = [
     {

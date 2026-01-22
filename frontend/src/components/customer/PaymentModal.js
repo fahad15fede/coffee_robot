@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import coffeeVideo from '../../assets/cream_poured_coffee.mp4';
 
 const API_BASE_URL = 'http://localhost:8000';

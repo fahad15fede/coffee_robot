@@ -9,7 +9,7 @@ export default function MyOrders({ customer, onBack }) {
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [customer.customer_id]); // Add customer.customer_id as dependency
 
   const fetchOrders = async () => {
     try {

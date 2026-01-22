@@ -11,7 +11,7 @@ export default function OrderConfirmation({ customer, orderId, onNewOrder }) {
 
   useEffect(() => {
     fetchOrderSummary();
-  }, [orderId]);
+  }, [orderId]); // orderId is already included, this should be fine
 
   const fetchOrderSummary = async () => {
     try {
