@@ -21,3 +21,5 @@ echo 1. Start the backend server
 echo 2. Register customers with duplicate phone/email
 echo.
 pause
+
+I also have a whole pgsql project named coffee_robot in pgadmin4 so is  DEPLOY_NOW.md also able to help eith thatelse update it, like 
