@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from typing import Optional
 from app.db_model.customer_db import CustomerDB
 from app.model.customer_model import Customer
 
@@ -68,7 +69,7 @@ def get_all_customers():
 # UPDATE
 # ---------------------------
 @router.put("/{customer_id}")
-def update_customer(customer_id: int , name: str| None = None, phone: str| None = None, email: str| None = None):
+def update_customer(customer_id: int, name: Optional[str] = None, phone: Optional[str] = None, email: Optional[str] = None):
     database = get_db()
     updated = database.update_customer(customer_id, name, phone, email)
     if not updated:

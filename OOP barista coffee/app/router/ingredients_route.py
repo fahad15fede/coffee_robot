@@ -1,4 +1,5 @@
 from fastapi import HTTPException, APIRouter
+from typing import Optional
 from app.db_model.ingredients_db import IngredientDB
 from app.model.ingredients import Ingredient
 
@@ -61,11 +62,11 @@ def get_all_ingredients():
 @router.put("/update/{ingred_id}")
 def update_ingredient(
     ingred_id: int,
-    name: str | None = None,
-    unit: str | None = None,
-    price_per_unit: float | None = None,
-    quantity: float | None = None,
-    low_stock_limit: float | None = None
+    name: Optional[str] = None,
+    unit: Optional[str] = None,
+    price_per_unit: Optional[float] = None,
+    quantity: Optional[float] = None,
+    low_stock_limit: Optional[float] = None
 ):
     success = db.update_ingredient(ingred_id, name, unit, price_per_unit, quantity, low_stock_limit)
     if not success:

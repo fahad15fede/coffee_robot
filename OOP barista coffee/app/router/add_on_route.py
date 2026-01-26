@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from typing import Optional
 from app.db_model.add_ons_db import AddOnDb
 from app.model.add_ons import AddOn
 
@@ -61,8 +62,8 @@ def get_all_addons():
 # UPDATE
 # --------------------------------------------------------
 @router.put("/update/{addon_id}")
-def update_addon(addon_id: int, name: str | None = None, category: str | None = None,
-                 price: float | None = None, available: bool | None = None):
+def update_addon(addon_id: int, name: Optional[str] = None, category: Optional[str] = None,
+                 price: Optional[float] = None, available: Optional[bool] = None):
 
     success = db.update_addon(addon_id, name, category, price, available)
     if not success:
