@@ -27,6 +27,9 @@ COPY . .
 # Build React app
 RUN cd frontend && npm run build
 
+# Test imports before starting
+RUN python3 test_import.py
+
 # Expose port
 EXPOSE $PORT
 

@@ -41,9 +41,10 @@ app.add_middleware(
 )
 
 # Serve static files (React build) in production
-if os.path.exists("../frontend/build"):
-    app.mount("/static", StaticFiles(directory="../frontend/build/static"), name="static")
-    app.mount("/", StaticFiles(directory="../frontend/build", html=True), name="frontend")
+frontend_build_path = "/app/frontend/build"
+if os.path.exists(frontend_build_path):
+    app.mount("/static", StaticFiles(directory=f"{frontend_build_path}/static"), name="static")
+    app.mount("/", StaticFiles(directory=frontend_build_path, html=True), name="frontend")
 
 # Register all route groups here
 app.include_router(customer_router)
