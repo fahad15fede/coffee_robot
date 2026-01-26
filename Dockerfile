@@ -31,14 +31,15 @@ COPY . .
 WORKDIR /app/frontend
 RUN npm run build
 
-# Back to app root
+# Back to app root and create symlink to avoid space issues
 WORKDIR /app
+RUN ln -s "OOP barista coffee" coffee_app
 
-# Make scripts executable
-RUN chmod +x start.py start.sh
+# Make start script executable
+RUN chmod +x start.py
 
 # Expose port
 EXPOSE $PORT
 
 # Start the application
-CMD ["python3", "start.py"]
+ENTRYPOINT ["python3", "start.py"]
