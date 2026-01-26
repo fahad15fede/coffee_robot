@@ -7,7 +7,8 @@ router = APIRouter(
     tags=["Add Ons"]
 )
 
-db = AddOnDb()
+def get_db():
+    return AddOnDb()
 
 
 # --------------------------------------------------------

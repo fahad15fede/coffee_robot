@@ -7,7 +7,8 @@ router = APIRouter(
     tags=['Ingredient Items']
 )
 
-db = IngredientDB()
+def get_db():
+    return IngredientDB()
 
 # -----------------------------
 # CREATE

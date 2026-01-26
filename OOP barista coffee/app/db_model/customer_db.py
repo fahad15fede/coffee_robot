@@ -1,26 +1,27 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from app.model.customer_model import Customer
+from app.database.postgres_config import get_database_connection
 
 class CustomerDB:
-    def __init__(self, host="localhost", database="coffee_robot", user="postgres", password="fahad15fede"):
-        self.conn = psycopg2.connect(
-            host=host,
-            database=database,
-            user=user,
-            password=password 
-        )
-        self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-
-        self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS customers (
-                customer_id SERIAL PRIMARY KEY,
-                customer_name VARCHAR(50),
-                phone VARCHAR(20),
-                email VARCHAR(100)
-            );
-        """)
-        self.conn.commit()
+    def __init__(self):
+        try:
+            self.conn = get_database_connection()
+            if self.conn:
+                self.cursor = self.conn.cursor()
+                self.cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS customers (
+                        customer_id SERIAL PRIMARY KEY,
+                        customer_name VARCHAR(50),
+                        phone VARCHAR(20),
+                        email VARCHAR(100)
+                    );
+                """)
+                self.conn.commit()
+        except Exception as e:
+            print(f"Database initialization failed: {e}")
+            self.conn = None
+            self.cursor = None
 
     # ---------------------- ADD ----------------------
     def add_customer(self, customer: Customer):

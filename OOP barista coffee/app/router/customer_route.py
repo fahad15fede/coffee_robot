@@ -7,7 +7,14 @@ router = APIRouter(
     tags=["Customers"]
 )
 
-db = CustomerDB()   # Database connection
+# Database connection - will be created when first accessed
+db = None
+
+def get_db():
+    global db
+    if db is None:
+        db = CustomerDB()
+    return db
 
 
 # ---------------------------
@@ -15,8 +22,9 @@ db = CustomerDB()   # Database connection
 # ---------------------------
 @router.post("/add")
 def add_customer(name: str, phone: str, email: str):
+    database = get_db()
     customer = Customer(None, name, phone, email)
-    new_id = db.add_customer(customer)
+    new_id = database.add_customer(customer)
     return {"message": "Customer added", "customer_id": new_id}
 
 
@@ -25,7 +33,8 @@ def add_customer(name: str, phone: str, email: str):
 # ---------------------------
 @router.get("/{customer_id}")
 def get_customer(customer_id: int):
-    customer = db.get_customer(customer_id)
+    database = get_db()
+    customer = database.get_customer(customer_id)
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
 
@@ -42,7 +51,8 @@ def get_customer(customer_id: int):
 # ---------------------------
 @router.get("/")
 def get_all_customers():
-    customers = db.get_all()
+    database = get_db()
+    customers = database.get_all()
     return [
         {
             "customer_id": c.customer_id,
@@ -59,7 +69,8 @@ def get_all_customers():
 # ---------------------------
 @router.put("/{customer_id}")
 def update_customer(customer_id: int , name: str| None = None, phone: str| None = None, email: str| None = None):
-    updated = db.update_customer(customer_id, name, phone, email)
+    database = get_db()
+    updated = database.update_customer(customer_id, name, phone, email)
     if not updated:
         raise HTTPException(status_code=404, detail="Customer not found")
 
@@ -71,7 +82,8 @@ def update_customer(customer_id: int , name: str| None = None, phone: str| None 
 # ---------------------------
 @router.delete("/{customer_id}")
 def delete_customer(customer_id: int):
-    deleted = db.delete_customer(customer_id)
+    database = get_db()
+    deleted = database.delete_customer(customer_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Customer not found")
 

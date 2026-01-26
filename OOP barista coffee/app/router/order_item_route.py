@@ -6,7 +6,8 @@ router = APIRouter(
     tags=["order-items"]
 )
 
-db = OrderItemDb()
+def get_db():
+    return OrderItemDb()
 
 
 # -------------------------------------------------

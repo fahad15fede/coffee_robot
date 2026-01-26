@@ -7,7 +7,8 @@ router = APIRouter(
     tags=["Menu Items"]
 )
 
-db = MenuItemDB()
+def get_db():
+    return MenuItemDB()
 
 
 # --------------------------------------------------------
