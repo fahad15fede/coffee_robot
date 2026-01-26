@@ -7,6 +7,7 @@ WORKDIR /app
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     curl \
+    bash \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js
@@ -27,8 +28,11 @@ COPY . .
 # Build React app
 RUN cd frontend && npm run build
 
+# Make scripts executable
+RUN chmod +x start.py start.sh
+
 # Expose port
 EXPOSE $PORT
 
-# Start the application
-CMD ["python3", "start.py"]
+# Start the application using the shell script
+CMD ["./start.sh"]
