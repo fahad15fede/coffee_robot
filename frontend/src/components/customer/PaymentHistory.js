@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 export default function PaymentHistory({ customer, onBack }) {
   const [payments, setPayments] = useState([]);
@@ -84,7 +84,7 @@ export default function PaymentHistory({ customer, onBack }) {
               <div>
                 <p className="text-gray-600 text-sm">Total Paid</p>
                 <p className="text-3xl font-bold text-green-600">
-                  ${stats.totalPaid.toFixed(2)}
+                  Rs {stats.totalPaid.toFixed(2)}
                 </p>
                 <p className="text-xs text-gray-500">{stats.paidOrders} orders</p>
               </div>
@@ -99,7 +99,7 @@ export default function PaymentHistory({ customer, onBack }) {
               <div>
                 <p className="text-gray-600 text-sm">Pending</p>
                 <p className="text-3xl font-bold text-yellow-600">
-                  ${stats.pendingAmount.toFixed(2)}
+                  Rs {stats.pendingAmount.toFixed(2)}
                 </p>
                 <p className="text-xs text-gray-500">Awaiting payment</p>
               </div>
@@ -183,7 +183,7 @@ export default function PaymentHistory({ customer, onBack }) {
                     </div>
                     <div className="text-right">
                       <p className="text-3xl font-bold text-amber-900">
-                        ${payment.total_amount.toFixed(2)}
+                        Rs {payment.total_amount.toFixed(2)}
                       </p>
                       {payment.status === 'paid' || payment.status === 'completed' ? (
                         <p className="text-sm text-green-600 font-semibold">✓ Completed</p>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 export default function OrderManagement() {
   const [orders, setOrders] = useState([]);
@@ -40,18 +40,23 @@ export default function OrderManagement() {
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
+      setError(null);
       const response = await fetch(
         `${API_BASE_URL}/orders/${orderId}/status?status=${newStatus}`,
         { method: 'PUT' }
       );
-      if (!response.ok) throw new Error('Failed to update order status');
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to update order status');
+      }
       
       fetchOrders();
       if (selectedOrder?.order_id === orderId) {
         fetchOrderDetails(orderId);
       }
     } catch (err) {
-      setError(err.message);
+      setError(`Status Update Error: ${err.message}`);
     }
   };
 
@@ -140,7 +145,7 @@ export default function OrderManagement() {
                       {new Date(order.created_at).toLocaleString()}
                     </span>
                     <span className="font-bold text-amber-900">
-                      ${order.total_amount.toFixed(2)}
+                      Rs {order.total_amount.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -180,7 +185,7 @@ export default function OrderManagement() {
                   </div>
                   <div>
                     <p className="text-gray-600">Total Amount</p>
-                    <p className="font-semibold text-amber-900">${selectedOrder.total_amount.toFixed(2)}</p>
+                    <p className="font-semibold text-amber-900">Rs {selectedOrder.total_amount.toFixed(2)}</p>
                   </div>
                 </div>
               </div>
@@ -196,14 +201,14 @@ export default function OrderManagement() {
                           <p className="font-semibold text-amber-900">{item.item_name}</p>
                           <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                         </div>
-                        <p className="font-bold text-amber-900">${item.sub_total.toFixed(2)}</p>
+                        <p className="font-bold text-amber-900">Rs {item.sub_total.toFixed(2)}</p>
                       </div>
                       {item.addons && item.addons.length > 0 && (
                         <div className="mt-2 pl-3 border-l-2 border-amber-300">
                           <p className="text-xs text-gray-500 mb-1">Add-ons:</p>
                           {item.addons.map((addon, addonIndex) => (
                             <p key={addonIndex} className="text-xs text-gray-600">
-                              • {addon.addon_name} (+${addon.price.toFixed(2)})
+                              • {addon.addon_name} (+Rs {addon.price.toFixed(2)})
                             </p>
                           ))}
                         </div>

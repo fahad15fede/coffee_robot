@@ -7,25 +7,26 @@ export default function App() {
 
   if (!role) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#FAF8F3' }}>
         <div className="max-w-4xl w-full">
           <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold text-amber-900 mb-4">☕ Coffee Shop</h1>
-            <p className="text-xl text-amber-700">Welcome! Please select your role</p>
+            <h1 className="text-5xl font-bold mb-4" style={{ color: '#3D2F1F' }}>☕ Coffee Shop</h1>
+            <p className="text-xl" style={{ color: '#6B5B47' }}>Welcome! Please select your role</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Customer Card */}
             <div
               onClick={() => setRole('customer')}
-              className="bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-amber-200 hover:border-amber-500 cursor-pointer transform hover:scale-105 transition duration-300"
+              className="rounded-2xl shadow-lg overflow-hidden cursor-pointer transform hover:scale-105 transition duration-300"
+              style={{ backgroundColor: '#F5F2ED', border: '2px solid #E8E0D0' }}
             >
-              <div className="bg-gradient-to-r from-amber-600 to-amber-700 px-8 py-12 text-center">
+              <div className="px-8 py-12 text-center" style={{ backgroundColor: '#CCB26C' }}>
                 <div className="text-6xl mb-4">🛒</div>
-                <h2 className="text-3xl font-bold text-white">Customer</h2>
+                <h2 className="text-3xl font-bold" style={{ color: '#3D2F1F' }}>Customer</h2>
               </div>
               <div className="p-8">
-                <ul className="space-y-3 text-amber-900">
+                <ul className="space-y-3" style={{ color: '#6B5B47' }}>
                   <li className="flex items-center gap-3">
                     <span className="text-green-600 font-bold">✓</span>
                     <span>Browse menu items</span>
@@ -43,7 +44,10 @@ export default function App() {
                     <span>Place and pay for orders</span>
                   </li>
                 </ul>
-                <button className="w-full mt-6 bg-amber-700 hover:bg-amber-800 text-white font-bold py-3 px-6 rounded-lg transition">
+                <button 
+                  className="w-full mt-6 py-3 px-6 rounded-lg font-bold transition-all duration-200 hover:shadow-md"
+                  style={{ backgroundColor: '#CCB26C', color: '#3D2F1F' }}
+                >
                   Continue as Customer
                 </button>
               </div>
@@ -52,14 +56,15 @@ export default function App() {
             {/* Admin Card */}
             <div
               onClick={() => setRole('admin')}
-              className="bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-amber-200 hover:border-amber-500 cursor-pointer transform hover:scale-105 transition duration-300"
+              className="rounded-2xl shadow-lg overflow-hidden cursor-pointer transform hover:scale-105 transition duration-300"
+              style={{ backgroundColor: '#F5F2ED', border: '2px solid #E8E0D0' }}
             >
-              <div className="bg-gradient-to-r from-amber-800 to-amber-900 px-8 py-12 text-center">
+              <div className="px-8 py-12 text-center" style={{ backgroundColor: '#8B7355' }}>
                 <div className="text-6xl mb-4">👨‍💼</div>
-                <h2 className="text-3xl font-bold text-white">Admin</h2>
+                <h2 className="text-3xl font-bold" style={{ color: '#FAF8F3' }}>Admin</h2>
               </div>
               <div className="p-8">
-                <ul className="space-y-3 text-amber-900">
+                <ul className="space-y-3" style={{ color: '#6B5B47' }}>
                   <li className="flex items-center gap-3">
                     <span className="text-green-600 font-bold">✓</span>
                     <span>Manage menu items</span>
@@ -77,7 +82,10 @@ export default function App() {
                     <span>Track sales and payments</span>
                   </li>
                 </ul>
-                <button className="w-full mt-6 bg-amber-800 hover:bg-amber-900 text-white font-bold py-3 px-6 rounded-lg transition">
+                <button 
+                  className="w-full mt-6 py-3 px-6 rounded-lg font-bold transition-all duration-200 hover:shadow-md"
+                  style={{ backgroundColor: '#8B7355', color: '#FAF8F3' }}
+                >
                   Continue as Admin
                 </button>
               </div>
@@ -85,7 +93,7 @@ export default function App() {
           </div>
 
           <div className="text-center mt-8">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm" style={{ color: '#6B5B47' }}>
               This is a demo application. In production, authentication would be required.
             </p>
           </div>
@@ -99,7 +107,12 @@ export default function App() {
       <div>
         <button
           onClick={() => setRole(null)}
-          className="fixed top-2 right-2 sm:top-4 sm:right-4 z-[100] bg-white hover:bg-gray-100 text-amber-900 font-semibold py-2 px-3 sm:py-2 sm:px-4 rounded-lg shadow-lg border-2 border-amber-300 transition text-xs sm:text-sm"
+          className="fixed top-4 right-4 z-[100] px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-md text-sm shadow-sm"
+          style={{ 
+            backgroundColor: '#CCB26C', 
+            color: '#3D2F1F',
+            border: '1px solid rgba(61, 47, 31, 0.2)'
+          }}
         >
           ← Change Role
         </button>
@@ -113,7 +126,12 @@ export default function App() {
       <div>
         <button
           onClick={() => setRole(null)}
-          className="fixed top-2 right-2 sm:top-4 sm:right-4 z-[100] bg-white hover:bg-gray-100 text-amber-900 font-semibold py-2 px-3 sm:py-2 sm:px-4 rounded-lg shadow-lg border-2 border-amber-300 transition text-xs sm:text-sm"
+          className="fixed top-4 right-4 z-[100] px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-md text-sm shadow-sm"
+          style={{ 
+            backgroundColor: '#CCB26C', 
+            color: '#3D2F1F',
+            border: '1px solid rgba(61, 47, 31, 0.2)'
+          }}
         >
           ← Change Role
         </button>

@@ -1,23 +1,13 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from app.model.order import Order
+from app.database.postgres_config import get_database_connection
 
 
 class OrderDb:
-    def __init__(
-        self,
-        host="localhost",
-        database="coffee_robot",
-        user="postgres",
-        password="fahad15fede",
-    ):
-        self.conn = psycopg2.connect(
-            host=host,
-            user=user,
-            database=database,
-            password=password,
-        )
-        self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
+    def __init__(self):
+        self.conn = get_database_connection()
+        self.cursor = self.conn.cursor()
 
         self.cursor.execute(
             """
@@ -86,11 +76,12 @@ class OrderDb:
     # ORDER STATUS FLOW
     # -----------------------
     VALID_TRANSITIONS = {
-        "pending": ["in_process", "cancelled"],
-        "in_process": ["ready"],
-        "ready": ["paid"],
-        "paid": [],
-        "cancelled": [],
+        "pending": ["preparing", "ready", "paid", "completed", "cancelled"],
+        "preparing": ["pending", "ready", "paid", "completed", "cancelled"],
+        "ready": ["pending", "preparing", "paid", "completed", "cancelled"],
+        "paid": ["ready", "completed", "cancelled"],
+        "completed": ["ready", "paid"],  # Allow reverting completed orders
+        "cancelled": ["pending", "preparing", "ready"],  # Allow reactivating cancelled orders
     }
 
     # -----------------------
@@ -108,9 +99,14 @@ class OrderDb:
 
         current_status = row["status"]
 
+        # Allow same status (no-op)
+        if new_status == current_status:
+            return True, None
+
+        # Check if transition is allowed
         allowed = self.VALID_TRANSITIONS.get(current_status, [])
         if new_status not in allowed:
-            return False, f"Cannot change from {current_status} → {new_status}"
+            return False, f"Cannot change from {current_status} → {new_status}. Allowed: {', '.join(allowed)}"
 
         self.cursor.execute(
             """

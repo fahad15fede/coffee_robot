@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PaymentModal from './PaymentModal';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 export default function MenuBrowse({ customer, onPlaceOrder }) {
   const [menuItems, setMenuItems] = useState([]);

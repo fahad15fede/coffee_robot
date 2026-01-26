@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os
 from app.router.customer_route import router as customer_router
 from app.router.menu_item_route import router as menu_item_router
 from app.router.add_on_route import router as add_on_router
@@ -15,14 +17,33 @@ app = FastAPI(
     version="1.0"
 )
 
-# Configure CORS
+# Configure CORS for both development and production
+origins = [
+    "http://localhost:3000",  # React dev server
+    "https://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+# Add production domain when deployed
+if os.getenv("RAILWAY_ENVIRONMENT"):
+    # Railway will provide the domain
+    railway_domain = os.getenv("RAILWAY_STATIC_URL", "")
+    if railway_domain:
+        origins.append(f"https://{railway_domain}")
+        origins.append(f"http://{railway_domain}")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # React dev server
+    allow_origins=origins + ["*"],  # Allow all origins for now, restrict later
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Serve static files (React build) in production
+if os.path.exists("../frontend/build"):
+    app.mount("/static", StaticFiles(directory="../frontend/build/static"), name="static")
+    app.mount("/", StaticFiles(directory="../frontend/build", html=True), name="frontend")
 
 # Register all route groups here
 app.include_router(customer_router)
@@ -34,6 +55,10 @@ app.include_router(order_router)
 app.include_router(order_item_router)
 app.include_router(order_item_addon_router)
 app.include_router(payment_router)
+
+@app.get("/api/health")
+def health_check():
+    return {"status": "healthy", "message": "Coffee Shop Order Robot API is running!"}
 
 @app.get("/")
 def home():

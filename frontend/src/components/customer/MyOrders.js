@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import PaymentModal from './PaymentModal';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 export default function MyOrders({ customer, onBack }) {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentOrderId, setPaymentOrderId] = useState(null);
+  const [paymentAmount, setPaymentAmount] = useState(0);
 
   useEffect(() => {
     fetchOrders();
@@ -38,6 +42,22 @@ export default function MyOrders({ customer, onBack }) {
     }
   };
 
+  const handlePayNow = (order) => {
+    setPaymentOrderId(order.order_id);
+    setPaymentAmount(order.total_amount);
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowPaymentModal(false);
+    setPaymentOrderId(null);
+    setPaymentAmount(0);
+    fetchOrders(); // Refresh orders to show updated status
+    if (selectedOrder) {
+      fetchOrderDetails(selectedOrder.order_id); // Refresh selected order details
+    }
+  };
+
   const getStatusColor = (status) => {
     const colors = {
       pending: 'from-yellow-400 to-yellow-600',
@@ -47,6 +67,17 @@ export default function MyOrders({ customer, onBack }) {
       completed: 'from-gray-400 to-gray-600'
     };
     return colors[status] || 'from-gray-400 to-gray-600';
+  };
+
+  const getStatusMessage = (status) => {
+    const messages = {
+      pending: 'Order received - being processed',
+      preparing: 'Your order is being prepared',
+      ready: 'Order ready for pickup - Payment required',
+      paid: 'Payment completed - Order ready',
+      completed: 'Order completed'
+    };
+    return messages[status] || status;
   };
 
   return (
@@ -118,10 +149,26 @@ export default function MyOrders({ customer, onBack }) {
                     </div>
                   </div>
                   <div className="flex justify-between items-center pt-4 border-t-2 border-amber-100">
-                    <span className="text-gray-600">Total Amount</span>
-                    <span className="text-2xl font-bold text-amber-900">
-                      ${order.total_amount.toFixed(2)}
-                    </span>
+                    <div>
+                      <span className="text-gray-600">Total Amount</span>
+                      <p className="text-sm text-gray-500 mt-1">{getStatusMessage(order.status)}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-2xl font-bold text-amber-900">
+                        Rs {order.total_amount.toFixed(2)}
+                      </span>
+                      {order.status === 'ready' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePayNow(order);
+                          }}
+                          className="block mt-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition text-sm"
+                        >
+                          💳 Pay Now
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -156,7 +203,7 @@ export default function MyOrders({ customer, onBack }) {
                               <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                             </div>
                             <p className="font-bold text-amber-900 text-lg">
-                              ${item.sub_total.toFixed(2)}
+                              Rs {item.sub_total.toFixed(2)}
                             </p>
                           </div>
                           {item.addons && item.addons.length > 0 && (
@@ -164,7 +211,7 @@ export default function MyOrders({ customer, onBack }) {
                               <p className="text-xs text-gray-500 mb-1">Add-ons:</p>
                               {item.addons.map((addon, addonIndex) => (
                                 <p key={addonIndex} className="text-sm text-gray-700">
-                                  • {addon.addon_name} (+${addon.price.toFixed(2)})
+                                  • {addon.addon_name} (+Rs {addon.price.toFixed(2)})
                                 </p>
                               ))}
                             </div>
@@ -175,11 +222,24 @@ export default function MyOrders({ customer, onBack }) {
 
                     {/* Total */}
                     <div className="bg-gradient-to-r from-amber-600 to-orange-600 rounded-xl p-6 text-white">
-                      <div className="flex justify-between items-center">
+                      <div className="flex justify-between items-center mb-4">
                         <span className="text-xl font-semibold">Total Amount</span>
                         <span className="text-3xl font-bold">
-                          ${selectedOrder.total_amount.toFixed(2)}
+                          Rs {selectedOrder.total_amount.toFixed(2)}
                         </span>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-amber-100 text-sm mb-2">
+                          {getStatusMessage(selectedOrder.status)}
+                        </p>
+                        {selectedOrder.status === 'ready' && (
+                          <button
+                            onClick={() => handlePayNow(selectedOrder)}
+                            className="bg-white text-amber-600 font-bold py-3 px-6 rounded-lg hover:bg-amber-50 transition"
+                          >
+                            💳 Pay Now - Rs {selectedOrder.total_amount.toFixed(2)}
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -187,6 +247,16 @@ export default function MyOrders({ customer, onBack }) {
               )}
             </div>
           </div>
+        )}
+
+        {/* Payment Modal */}
+        {showPaymentModal && paymentOrderId && (
+          <PaymentModal
+            orderId={paymentOrderId}
+            totalAmount={paymentAmount}
+            onClose={() => setShowPaymentModal(false)}
+            onSuccess={handlePaymentSuccess}
+          />
         )}
       </div>
     </div>

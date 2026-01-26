@@ -13,7 +13,7 @@ import brownie from '../../assets/brownie.jpg';
 import doughnut from '../../assets/doughnut.png';
 import lemonade from '../../assets/lemonade.png';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 // Image mapping for menu items
 const itemImages = {
