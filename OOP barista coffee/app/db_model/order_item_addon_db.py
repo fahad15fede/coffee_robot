@@ -1,25 +1,26 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from app.database.postgres_config import get_database_connection
 
 class OrderItemAddonDb:
-    def __init__(self, host='localhost', database='coffee_robot', user='postgres', password='fahad15fede'):
-        self.conn = psycopg2.connect(
-            host=host,
-            user=user,
-            database=database,
-            password=password
-        )
-        self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-
-        self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS order_item_addons (
-                id SERIAL PRIMARY KEY,
-                order_item_id INT REFERENCES order_items(order_item_id) ON DELETE CASCADE,
-                addon_id INT REFERENCES add_ons(addon_id) ON DELETE CASCADE,
-                price NUMERIC(8,2) NOT NULL
-            );
-        """)
-        self.conn.commit()
+    def __init__(self):
+        try:
+            self.conn = get_database_connection()
+            if self.conn:
+                self.cursor = self.conn.cursor()
+                self.cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS order_item_addons (
+                        id SERIAL PRIMARY KEY,
+                        order_item_id INT REFERENCES order_items(order_item_id) ON DELETE CASCADE,
+                        addon_id INT REFERENCES add_ons(addon_id) ON DELETE CASCADE,
+                        price NUMERIC(8,2) NOT NULL
+                    );
+                """)
+                self.conn.commit()
+        except Exception as e:
+            print(f"OrderItemAddon database initialization failed: {e}")
+            self.conn = None
+            self.cursor = None
 
     def add_addon_to_order_item(self, order_item_id, addon_id):
         try:

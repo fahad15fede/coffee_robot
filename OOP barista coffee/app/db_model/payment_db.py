@@ -1,30 +1,32 @@
 from psycopg2.extras import RealDictCursor
 import psycopg2
 from app.model.payment import Payment
+from app.database.postgres_config import get_database_connection
+
 class PaymentDB:
-    def __init__(self, host = "localhost", password = "fahad15fede", user = "postgres", database = "coffee_robot"):
-        self.conn = psycopg2.connect(
-            host = host,
-            user = user,
-            database = database,
-            password = password
-        )
-        self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-
-        self.cursor.execute(
-            """
-            CREATE TABLE IF NOT EXISTS payments(
-            payment_id SERIAL PRIMARY KEY,
-            order_id INT REFERENCES orders(order_id) ON DELETE CASCADE,
-            amount NUMERIC (8,2),
-            status VARCHAR(100),
-            transaction_ref VARCHAR(255),
-            created_at TIMESTAMP DEFAULT NOW()
-            );
-            """
-        )
-
-        self.conn.commit()
+    def __init__(self):
+        try:
+            self.conn = get_database_connection()
+            if self.conn:
+                self.cursor = self.conn.cursor()
+                self.cursor.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS payments(
+                    payment_id SERIAL PRIMARY KEY,
+                    order_id INT REFERENCES orders(order_id) ON DELETE CASCADE,
+                    amount NUMERIC (8,2),
+                    method VARCHAR(50),
+                    status VARCHAR(100),
+                    transaction_ref VARCHAR(255),
+                    created_at TIMESTAMP DEFAULT NOW()
+                    );
+                    """
+                )
+                self.conn.commit()
+        except Exception as e:
+            print(f"Payment database initialization failed: {e}")
+            self.conn = None
+            self.cursor = None
     
     def create_payment(self, order_id, amount, method):
         try:

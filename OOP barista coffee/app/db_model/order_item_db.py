@@ -1,15 +1,28 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from app.database.postgres_config import get_database_connection
 
 class OrderItemDb:
-    def __init__(self, host='localhost', database='coffee_robot', user='postgres', password='fahad15fede'):
-        self.conn = psycopg2.connect(
-            host=host,
-            user=user,
-            database=database,
-            password=password
-        )
-        self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
+    def __init__(self):
+        try:
+            self.conn = get_database_connection()
+            if self.conn:
+                self.cursor = self.conn.cursor()
+                self.cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS order_items(
+                        order_item_id SERIAL PRIMARY KEY,
+                        order_id INT REFERENCES orders(order_id) ON DELETE CASCADE,
+                        item_id INT REFERENCES menu_items(item_id) ON DELETE CASCADE,
+                        quantity INT NOT NULL,
+                        item_price NUMERIC(8,2) NOT NULL,
+                        sub_total NUMERIC(8,2) NOT NULL
+                    );
+                """)
+                self.conn.commit()
+        except Exception as e:
+            print(f"OrderItem database initialization failed: {e}")
+            self.conn = None
+            self.cursor = None
 
         self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS order_items(

@@ -6,13 +6,15 @@ router = APIRouter(
     tags=["payments"]
 )
 
-payment_service = Payment_service()
+def get_payment_service():
+    return Payment_service()
 
 # -----------------------
 # INITIATE PAYMENT
 # -----------------------
 @router.post("/initiate")
 def initiate_payment(order_id: int, method: str):
+    payment_service = get_payment_service()
     success, message, payment = payment_service.initiate_payment(order_id, method)
 
     if not success:
@@ -37,6 +39,7 @@ def initiate_payment(order_id: int, method: str):
 # -----------------------
 @router.post("/confirm")
 def confirm_payment(payment_id: int, success: bool):
+    payment_service = get_payment_service()
     ok, message = payment_service.confirm_payment(payment_id, success)
 
     if not ok:
