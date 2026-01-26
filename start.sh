@@ -3,8 +3,7 @@ set -e
 
 echo "🚀 Starting Coffee Shop Application..."
 echo "📁 Current directory: $(pwd)"
-echo "🐍 Python version: $(python3 --version)"
-echo "📦 Node version: $(node --version)"
+echo "📁 Contents: $(ls -la)"
 
-# Start the Python application
+# Execute Python directly without any cd commands
 exec python3 start.py

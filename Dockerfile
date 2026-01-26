@@ -18,15 +18,21 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy frontend package files and install dependencies
+# Copy frontend package.json and install dependencies
 COPY frontend/package*.json ./frontend/
-RUN cd frontend && npm install
+WORKDIR /app/frontend
+RUN npm install
 
-# Copy all source code
+# Go back to app root and copy all files
+WORKDIR /app
 COPY . .
 
 # Build React app
-RUN cd frontend && npm run build
+WORKDIR /app/frontend
+RUN npm run build
+
+# Back to app root
+WORKDIR /app
 
 # Make scripts executable
 RUN chmod +x start.py start.sh
@@ -34,5 +40,5 @@ RUN chmod +x start.py start.sh
 # Expose port
 EXPOSE $PORT
 
-# Start the application using the shell script
-CMD ["./start.sh"]
+# Start the application
+CMD ["python3", "start.py"]

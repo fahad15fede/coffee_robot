@@ -3,35 +3,56 @@ import sys
 import os
 import uvicorn
 
+# Set up paths and environment
+app_root = "/app"
+coffee_dir = os.path.join(app_root, "OOP barista coffee")
+
+# Add to Python path
+sys.path.insert(0, app_root)
+sys.path.insert(0, coffee_dir)
+
+# Set working directory
+os.chdir(app_root)
+
 def main():
-    # Add the OOP barista coffee directory to Python path
-    coffee_dir = os.path.join(os.path.dirname(__file__), 'OOP barista coffee')
-    sys.path.insert(0, coffee_dir)
-    
-    # Change working directory to the coffee app directory
-    os.chdir(coffee_dir)
-    
-    # Get port from environment
     port = int(os.environ.get("PORT", 8000))
     
-    print(f"🚀 Starting Coffee Shop API on port {port}")
-    print(f"📁 Working directory: {os.getcwd()}")
-    print(f"🐍 Python path includes: {coffee_dir}")
+    print("🚀 Coffee Shop API Starting...")
+    print(f"📁 App root: {app_root}")
+    print(f"� Coffee dir: {coffee_dir}")
+    print(f"📁 Current dir: {os.getcwd()}")
+    print(f"🐍 Python path: {sys.path[:3]}")
+    print(f"🌐 Port: {port}")
     
     try:
-        # Import the FastAPI app
-        from app.main import app
-        print("✅ FastAPI app imported successfully")
+        # Import from the correct path
+        sys.path.insert(0, coffee_dir)
+        os.chdir(coffee_dir)
         
-        # Start the server
+        from app.main import app
+        print("✅ FastAPI app loaded successfully")
+        
+        # Start server
         uvicorn.run(
-            app, 
-            host="0.0.0.0", 
+            app,
+            host="0.0.0.0",
             port=port,
-            log_level="info"
+            log_level="info",
+            access_log=True
         )
+        
+    except ImportError as e:
+        print(f"❌ Import error: {e}")
+        print("Available files in coffee dir:")
+        try:
+            for item in os.listdir(coffee_dir):
+                print(f"  - {item}")
+        except:
+            print("  Could not list directory")
+        sys.exit(1)
+        
     except Exception as e:
-        print(f"❌ Failed to start server: {e}")
+        print(f"❌ Startup error: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)
