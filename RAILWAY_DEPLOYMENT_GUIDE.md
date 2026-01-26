@@ -1,10 +1,9 @@
-# Railway Deployment Guide for Coffee Shop App - UPDATED
+# Railway Deployment Guide for Coffee Shop App - DOCKER VERSION
 
-## 🔧 Fixed Issues:
-- ✅ Python pip command issue resolved
-- ✅ Added root-level requirements.txt
-- ✅ Created startup script for proper module loading
-- ✅ Simplified build process
+## 🔧 Latest Fix:
+- ✅ Switched from Nixpacks to Docker for more reliable builds
+- ✅ Docker handles Python pip installation properly
+- ✅ Simplified build process with standard Docker image
 
 ## Prerequisites
 - GitHub account with your code pushed
@@ -15,7 +14,7 @@
 1. **Commit all changes:**
 ```bash
 git add .
-git commit -m "Fix Railway deployment configuration"
+git commit -m "Switch to Docker for Railway deployment"
 git push origin main
 ```
 
@@ -56,11 +55,12 @@ REACT_APP_API_URL=https://your-actual-railway-url.railway.app
 ## Step 3: Deployment Process
 
 Railway will now:
-1. Use the fixed `nixpacks.toml` configuration
-2. Install Python dependencies from root `requirements.txt`
-3. Install Node.js dependencies and build React app
-4. Start the FastAPI backend using `start.py`
-5. Connect to the PostgreSQL database
+1. Use the `Dockerfile` for building
+2. Install Python 3.9 and Node.js 18
+3. Install Python dependencies with proper pip
+4. Install Node.js dependencies and build React app
+5. Start the FastAPI backend using `start.py`
+6. Connect to the PostgreSQL database
 
 ## Step 4: Database Setup
 
@@ -73,24 +73,20 @@ The database tables will be created automatically when the app starts.
 3. Test the frontend functionality
 4. Check database connections
 
-## 🔧 New Files Created to Fix Issues:
+## 🔧 New Docker-based Files:
+- `Dockerfile` - Docker build configuration
+- `.dockerignore` - Optimize Docker build
+- `railway.json` - Updated to use Docker builder
+- `start.py` - Python startup script
 - `requirements.txt` (root level) - Python dependencies
-- `start.py` - Startup script for proper module loading
-- `build.sh` - Build script for installation
-- `package.json` (root level) - Node.js configuration
 
-## Troubleshooting
-
-### If Build Still Fails:
-1. Check Railway build logs for specific errors
-2. Ensure all files are committed and pushed
-3. Try redeploying from Railway dashboard
-
-### Common Issues Fixed:
-- ✅ `pip: command not found` - Now using `python3 -m pip`
-- ✅ Module import errors - Fixed with `start.py` script
-- ✅ Build path issues - Simplified with root-level files
+## Advantages of Docker Approach:
+- ✅ More reliable Python/pip installation
+- ✅ Standard Python 3.9 environment
+- ✅ Better control over build process
+- ✅ Consistent across different platforms
+- ✅ Easier debugging
 
 ## 🚀 Ready to Deploy!
 
-Your app should now deploy successfully on Railway. The build process is more robust and handles the Python/Node.js setup properly.
+The Docker-based approach should resolve all the pip and Python module issues. Your coffee shop app will deploy successfully on Railway!
