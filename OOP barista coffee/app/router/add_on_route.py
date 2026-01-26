@@ -17,8 +17,9 @@ def get_db():
 # --------------------------------------------------------
 @router.post("/add")
 def add_addon(addon_name: str, addon_category: str, addon_price: float, addon_available: bool = True):
+    database = get_db()
     add_on = AddOn(None, addon_name, addon_category, addon_price, addon_available)
-    new_id = db.add_addon(add_on)
+    new_id = database.add_addon(add_on)
     return {"message": "Add-on added", "addon_id": new_id}
 
 
@@ -27,7 +28,8 @@ def add_addon(addon_name: str, addon_category: str, addon_price: float, addon_av
 # --------------------------------------------------------
 @router.get("/{addon_id}")
 def get_addon(addon_id: int):
-    add_on = db.get_addon(addon_id)
+    database = get_db()
+    add_on = database.get_addon(addon_id)
     if not add_on:
         raise HTTPException(status_code=404, detail="Add-on not found")
 
@@ -45,7 +47,8 @@ def get_addon(addon_id: int):
 # --------------------------------------------------------
 @router.get("/")
 def get_all_addons():
-    add_ons = db.get_all_addons()
+    database = get_db()
+    add_ons = database.get_all_addons()
     return [
         {
             "addon_id": a.addon_id,
@@ -64,8 +67,8 @@ def get_all_addons():
 @router.put("/update/{addon_id}")
 def update_addon(addon_id: int, name: Optional[str] = None, category: Optional[str] = None,
                  price: Optional[float] = None, available: Optional[bool] = None):
-
-    success = db.update_addon(addon_id, name, category, price, available)
+    database = get_db()
+    success = database.update_addon(addon_id, name, category, price, available)
     if not success:
         raise HTTPException(status_code=404, detail="Add-on not found or not updated")
 
@@ -77,7 +80,8 @@ def update_addon(addon_id: int, name: Optional[str] = None, category: Optional[s
 # --------------------------------------------------------
 @router.delete("/delete/{addon_id}")
 def delete_addon(addon_id: int):
-    success = db.delete_addon(addon_id)
+    database = get_db()
+    success = database.delete_addon(addon_id)
     if not success:
         raise HTTPException(status_code=404, detail="Add-on not found")
 

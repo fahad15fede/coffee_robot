@@ -16,8 +16,9 @@ def get_db():
 # -----------------------------
 @router.post('/add')
 def add_ingredient(ingred_name: str, unit: str, price_per_unit: float, quantity: float, low_stock_limit: float):
+    database = get_db()
     ingred = Ingredient(None, ingred_name, unit, price_per_unit, quantity, low_stock_limit)
-    new_id = db.add_ingredient(ingred)
+    new_id = database.add_ingredient(ingred)
     return {"message": "Ingredient added", "ingred_id": new_id}
 
 # -----------------------------
@@ -25,7 +26,8 @@ def add_ingredient(ingred_name: str, unit: str, price_per_unit: float, quantity:
 # -----------------------------
 @router.get("/{ingred_id}")
 def get_ingredient(ingred_id: int):
-    ingred = db.get_ingredient(ingred_id)
+    database = get_db()
+    ingred = database.get_ingredient(ingred_id)
     if not ingred:
         raise HTTPException(status_code=404, detail="Ingredient not found")
 
@@ -43,7 +45,8 @@ def get_ingredient(ingred_id: int):
 # -----------------------------
 @router.get("/")
 def get_all_ingredients():
-    ingreds = db.get_all_ingredients()
+    database = get_db()
+    ingreds = database.get_all_ingredients()
     return [
         {
             "ingred_id": i.ingred_id,
@@ -68,7 +71,8 @@ def update_ingredient(
     quantity: Optional[float] = None,
     low_stock_limit: Optional[float] = None
 ):
-    success = db.update_ingredient(ingred_id, name, unit, price_per_unit, quantity, low_stock_limit)
+    database = get_db()
+    success = database.update_ingredient(ingred_id, name, unit, price_per_unit, quantity, low_stock_limit)
     if not success:
         raise HTTPException(status_code=404, detail="Ingredient not found")
 
@@ -79,7 +83,8 @@ def update_ingredient(
 # -----------------------------
 @router.delete("/delete/{ingred_id}")
 def delete_ingredient(ingred_id: int):
-    success = db.delete_ingredient(ingred_id)
+    database = get_db()
+    success = database.delete_ingredient(ingred_id)
     if not success:
         raise HTTPException(status_code=404, detail="Ingredient not found")
 

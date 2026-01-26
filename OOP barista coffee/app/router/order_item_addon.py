@@ -6,7 +6,8 @@ router = APIRouter(
     tags=["order-item-addons"]
 )
 
-db = OrderItemAddonDb()
+def get_db():
+    return OrderItemAddonDb()
 
 
 # -----------------------------------
@@ -14,6 +15,7 @@ db = OrderItemAddonDb()
 # -----------------------------------
 @router.post("/add")
 def add_addon(order_item_id: int, addon_id: int):
+    db = get_db()
     new_id = db.add_addon_to_order_item(order_item_id, addon_id)
 
     if not new_id:
@@ -33,6 +35,7 @@ def add_addon(order_item_id: int, addon_id: int):
 # -----------------------------------
 @router.get("/{order_item_id}")
 def get_addons(order_item_id: int):
+    db = get_db()
     addons = db.get_addons_of_order_item(order_item_id)
 
     if not addons:
@@ -58,6 +61,7 @@ def get_addons(order_item_id: int):
 # -----------------------------------
 @router.delete("/delete/{id}")
 def remove_addon(id: int):
+    db = get_db()
     success = db.remove_addon(id)
 
     if not success:
