@@ -1,28 +1,27 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from app.model.menuItem import MenuItem
+from app.database.postgres_config import get_database_connection
 
 class MenuItemDB:
-    def __init__(self, host="localhost", database="coffee_robot", user="postgres", password="fahad15fede"):
-            self.conn = psycopg2.connect(
-                host=host,
-                database=database,
-                user=user,
-                password=password 
-            )
-            self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
-
-            #create table if it does not exist
-
-            self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS menu_items(
-                item_id SERIAL PRIMARY KEY,
-                item_name VARCHAR(100),                           
-                category VARCHAR(50),
-                price NUMERIC
-                );                
-                """)
-            self.conn.commit()
+    def __init__(self):
+        try:
+            self.conn = get_database_connection()
+            if self.conn:
+                self.cursor = self.conn.cursor()
+                self.cursor.execute("""
+                CREATE TABLE IF NOT EXISTS menu_items(
+                    item_id SERIAL PRIMARY KEY,
+                    item_name VARCHAR(100),                           
+                    category VARCHAR(50),
+                    price NUMERIC
+                    );                
+                    """)
+                self.conn.commit()
+        except Exception as e:
+            print(f"MenuItem database initialization failed: {e}")
+            self.conn = None
+            self.cursor = None
 
     def add_item(self, item: MenuItem):
             self.cursor.execute("""

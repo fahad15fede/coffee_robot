@@ -22,19 +22,18 @@ origins = [
     "http://localhost:3000",  # React dev server
     "https://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://web-production-12d6e.up.railway.app",  # Your actual Railway frontend URL
 ]
 
 # Add production domain when deployed
-if os.getenv("RAILWAY_ENVIRONMENT"):
-    # Railway will provide the domain
-    railway_domain = os.getenv("RAILWAY_STATIC_URL", "")
-    if railway_domain:
-        origins.append(f"https://{railway_domain}")
-        origins.append(f"http://{railway_domain}")
+railway_static_url = os.getenv("RAILWAY_STATIC_URL", "")
+if railway_static_url:
+    origins.append(f"https://{railway_static_url}")
+    origins.append(f"http://{railway_static_url}")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins + ["*"],  # Allow all origins for now, restrict later
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
