@@ -9,6 +9,14 @@ import uvicorn
 def main():
     """Main application entry point"""
     try:
+        # CRITICAL: Set DATABASE_URL for Railway PostgreSQL
+        if not os.getenv('DATABASE_URL'):
+            print("⚠️  DATABASE_URL not found in environment, setting manually...")
+            os.environ['DATABASE_URL'] = "postgresql://postgres:asRanvYsGkSfSXDKNSBJtkaqGvyDbAiy@postgres.railway.internal:5432/railway"
+            print("✅ DATABASE_URL set manually")
+        else:
+            print(f"✅ DATABASE_URL found: {os.getenv('DATABASE_URL')[:50]}...")
+        
         # Setup paths - try symlink first, then original
         app_root = "/app"
         
@@ -34,6 +42,7 @@ def main():
         print(f"📁 Working dir: {os.getcwd()}")
         print(f"🌐 Port: {port}")
         print(f"📁 Directory exists: {os.path.exists(coffee_path)}")
+        print(f"🗄️  DATABASE_URL: {'SET' if os.getenv('DATABASE_URL') else 'NOT SET'}")
         
         # List contents for debugging
         print("📁 Contents:")
