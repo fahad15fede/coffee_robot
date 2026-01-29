@@ -3,7 +3,7 @@ from datetime import datetime
 
 class DatabaseManager:
 
-    def __init__(self, db_name, user, password, host="postgresql://postgres:asRanvYsGkSfSXDKNSBJtkaqGvyDbAiy@postgres.railway.internal:5432/railway", port="5432"):
+    def __init__(self, db_name, user, password, host="postgresql://postgres:asRanvYsGkSfSXDKNSBJtkaqGvyDbAiy@postgres.railway.internal:5432/railway", port="18650"):
         self.conn = psycopg2.connect(
             dbname=db_name,
             user=user,
