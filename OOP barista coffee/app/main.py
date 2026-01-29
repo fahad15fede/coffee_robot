@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 import os
 from app.router.customer_route import router as customer_router
 from app.router.menu_item_route import router as menu_item_router
@@ -48,13 +49,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Serve static files (React build) in production
-frontend_build_path = "/app/frontend/build"
-if os.path.exists(frontend_build_path):
-    app.mount("/static", StaticFiles(directory=f"{frontend_build_path}/static"), name="static")
-    app.mount("/", StaticFiles(directory=frontend_build_path, html=True), name="frontend")
-
-# Register all route groups here
+# Register all API routes (these will be accessible directly)
 app.include_router(customer_router)
 app.include_router(menu_item_router)
 app.include_router(add_on_router)
@@ -69,8 +64,25 @@ app.include_router(payment_router)
 def health_check():
     return {"status": "healthy", "message": "Coffee Shop Order Robot API is running!"}
 
-@app.get("/")
-def home():
-    return {"message": "Coffee Shop Order Robot API is running!"}
+# Serve static files and React app
+frontend_build_path = "/app/frontend/build"
+if os.path.exists(frontend_build_path):
+    # Serve static assets
+    app.mount("/static", StaticFiles(directory=f"{frontend_build_path}/static"), name="static")
+    
+    # Serve React app for all other routes (SPA fallback)
+    @app.get("/{full_path:path}")
+    def serve_react_app(full_path: str):
+        # If it's an API route that doesn't exist, return 404
+        if full_path.startswith(("customers", "menu", "addon", "ingredients", "orders", "order-item", "order-item-addon", "payments")):
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail="API endpoint not found")
+        
+        # For all other routes, serve the React app
+        return FileResponse(f"{frontend_build_path}/index.html")
+else:
+    @app.get("/")
+    def home():
+        return {"message": "Coffee Shop Order Robot API is running!"}
 
 
