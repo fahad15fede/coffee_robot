@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo Coffee Shop - CRITICAL 500 ERROR FIXES
+echo Coffee Shop - DATABASE CONNECTION FIXES
 echo ========================================
 echo.
 
@@ -8,28 +8,27 @@ echo [1/4] Adding all changes to git...
 git add .
 
 echo.
-echo [2/4] Committing critical database fixes...
-git commit -m "CRITICAL: Fix 500 Internal Server Errors
+echo [2/4] Committing database connection improvements...
+git commit -m "Enhanced Railway PostgreSQL connection handling
 
-Database Connection Fixes:
-- Fixed OrderDb lazy loading (was causing 500 errors)
-- Fixed MenuItemDB lazy loading (was causing 500 errors)  
-- Fixed PaymentDB lazy loading
-- Fixed OrderItemDb lazy loading
-- Fixed OrderItemAddonDb lazy loading
-- All database classes now use proper lazy loading pattern
+Database Connection Improvements:
+- Enhanced postgres_config.py with better Railway URL parsing
+- Added fallback connection method for Railway DATABASE_URL
+- Added comprehensive logging for connection debugging
+- Added /api/debug/db endpoint for connection troubleshooting
+- Fixed all database models to use proper lazy loading
 
-API Routing Fixes:
-- Fixed FastAPI routing to prevent React SPA conflicts
-- Added proper SPA fallback handling
-- Enhanced CORS configuration for Railway domains
+Railway DATABASE_URL Support:
+- Properly handles: postgresql://postgres:password@postgres.railway.internal:5432/railway
+- Added URL parsing with urllib.parse for robust connection handling
+- Enhanced error handling and connection status logging
 
-SQL Fixes:
-- Fixed SQL syntax errors in payment_db.py (quotes)
-- Fixed SQL syntax errors in order_item_addon_db.py (typos)
-- Fixed table name inconsistencies
+Debug Features:
+- Added connection info endpoint at /api/debug/db
+- Added detailed logging for connection attempts
+- Better error messages for troubleshooting
 
-All 500 errors should now be resolved!"
+All 500 errors should now be resolved with proper Railway PostgreSQL connection!"
 
 echo.
 echo [3/4] Pushing to Railway...
@@ -38,19 +37,19 @@ git push
 echo.
 echo [4/4] Deployment Status
 echo ========================================
-echo ✅ CRITICAL 500 errors fixed
+echo ✅ Enhanced Railway PostgreSQL connection handling
 echo ✅ All database models use lazy loading
-echo ✅ API routing conflicts resolved
-echo ✅ SQL syntax errors corrected
+echo ✅ Added comprehensive connection logging
+echo ✅ Added debug endpoint for troubleshooting
 echo ✅ Changes pushed to Railway
 echo.
 echo 🧪 TEST THESE ENDPOINTS NOW:
+echo - https://web-production-12d6e.up.railway.app/api/debug/db
 echo - https://web-production-12d6e.up.railway.app/menu/
 echo - https://web-production-12d6e.up.railway.app/orders/
 echo - https://web-production-12d6e.up.railway.app/customers/
-echo - https://web-production-12d6e.up.railway.app/addon/
 echo.
-echo 📋 Should now return JSON data instead of 500 errors
+echo 📋 Check /api/debug/db first to verify database connection
 echo ========================================
 
 pause

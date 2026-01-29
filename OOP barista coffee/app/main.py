@@ -64,6 +64,25 @@ app.include_router(payment_router)
 def health_check():
     return {"status": "healthy", "message": "Coffee Shop Order Robot API is running!"}
 
+# Database connection debug endpoint
+@app.get("/api/debug/db")
+def debug_database():
+    from app.database.postgres_config import test_connection, get_connection_info
+    
+    # Test connection
+    success, message = test_connection()
+    
+    # Get connection info
+    conn_info = get_connection_info()
+    
+    return {
+        "database_connection": {
+            "status": "connected" if success else "failed",
+            "message": message,
+            "connection_info": conn_info
+        }
+    }
+
 # Serve static files and React app
 frontend_build_path = "/app/frontend/build"
 if os.path.exists(frontend_build_path):
