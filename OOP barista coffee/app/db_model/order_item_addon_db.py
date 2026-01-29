@@ -4,7 +4,12 @@ from app.database.postgres_config import get_database_connection
 
 class OrderItemAddonDb:
     def __init__(self):
-        try:
+        self.conn = None
+        self.cursor = None
+
+    def _get_connection(self):
+        """Lazy loading of database connection"""
+        if self.conn is None:
             self.conn = get_database_connection()
             if self.conn:
                 self.cursor = self.conn.cursor()
@@ -17,12 +22,12 @@ class OrderItemAddonDb:
                     );
                 """)
                 self.conn.commit()
-        except Exception as e:
-            print(f"OrderItemAddon database initialization failed: {e}")
-            self.conn = None
-            self.cursor = None
+        return self.conn
 
     def add_addon_to_order_item(self, order_item_id, addon_id):
+        if not self._get_connection():
+            return None
+            
         try:
             self.cursor.execute(
                 "SELECT price FROM add_ons WHERE addon_id = %s",
@@ -35,11 +40,11 @@ class OrderItemAddonDb:
 
             self.cursor.execute(
                 """
-            I   INSERT INTO order_items_addons(order_item_id, addon_id, price)
-                VALUES (%S,%S,%s)
+                INSERT INTO order_item_addons(order_item_id, addon_id, price)
+                VALUES (%s,%s,%s)
                 RETURNING id    
-                """
-                ,(order_item_id, addon_id, price)
+                """,
+                (order_item_id, addon_id, price)
             )
 
             new_id = self.cursor.fetchone()['id']
@@ -52,13 +57,16 @@ class OrderItemAddonDb:
 
             self.conn.commit()
             self.recalc_order_amount(order_id)
-            return addon_id
+            return new_id
         
         except Exception:
             self.conn.rollback()
             raise
 
     def get_addons_of_order_item(self, order_item_id):
+        if not self._get_connection():
+            return []
+            
         self.cursor.execute(
             """
             SELECT oia.id,
@@ -75,14 +83,17 @@ class OrderItemAddonDb:
         return self.cursor.fetchall()
     
     def remove_addon(self, addon_row_id):
+        if not self._get_connection():
+            return False
+            
         try:
             self.cursor.execute(
                 """
-            DELETE FROM order_item_addon
-            WHRE id = %s
-            RETURNING order_item_id;
-            """,
-            (addon_row_id,)
+                DELETE FROM order_item_addons
+                WHERE id = %s
+                RETURNING order_item_id;
+                """,
+                (addon_row_id,)
             )
 
             row = self.cursor.fetchone()
@@ -91,9 +102,9 @@ class OrderItemAddonDb:
             
             order_item_id = row["order_item_id"]
             self.cursor.execute(
-                    "SELECT order_id FROM order_items WHERE order_item_id = %s",
-                    (order_item_id,)
-                )
+                "SELECT order_id FROM order_items WHERE order_item_id = %s",
+                (order_item_id,)
+            )
             order_id = self.cursor.fetchone()["order_id"]
 
             self.conn.commit()
@@ -103,9 +114,10 @@ class OrderItemAddonDb:
             self.conn.rollback()
             raise
     
-        
-    
     def recalc_order_amount(self, order_id):
+        if not self._get_connection():
+            return
+            
         self.cursor.execute(
             """UPDATE orders
             SET total_amount = (
@@ -118,7 +130,7 @@ class OrderItemAddonDb:
                     WHERE oi.order_id = %s
                     )
                     WHERE order_id = %s
-                    """,(order_id, order_id)
+                    """, (order_id, order_id)
         )
         self.conn.commit()
     

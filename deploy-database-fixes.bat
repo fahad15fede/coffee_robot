@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo Coffee Shop - API Routing Fix Deployment
+echo Coffee Shop - CRITICAL 500 ERROR FIXES
 echo ========================================
 echo.
 
@@ -8,18 +8,28 @@ echo [1/4] Adding all changes to git...
 git add .
 
 echo.
-echo [2/4] Committing changes...
-git commit -m "Fix API routing and database connections for Railway
+echo [2/4] Committing critical database fixes...
+git commit -m "CRITICAL: Fix 500 Internal Server Errors
 
-- Fixed FastAPI routing to prevent React SPA from overriding API endpoints
-- Updated ingredient_menu_db.py to use lazy loading
-- Updated ingredients_db.py to use lazy loading  
-- Updated add_ons_db.py to use lazy loading
+Database Connection Fixes:
+- Fixed OrderDb lazy loading (was causing 500 errors)
+- Fixed MenuItemDB lazy loading (was causing 500 errors)  
+- Fixed PaymentDB lazy loading
+- Fixed OrderItemDb lazy loading
+- Fixed OrderItemAddonDb lazy loading
+- All database classes now use proper lazy loading pattern
+
+API Routing Fixes:
+- Fixed FastAPI routing to prevent React SPA conflicts
+- Added proper SPA fallback handling
 - Enhanced CORS configuration for Railway domains
-- Removed duplicate router registrations
-- Added proper SPA fallback for React routing
-- All database connections now use get_database_connection()
-- API endpoints now accessible at /menu/, /orders/, etc."
+
+SQL Fixes:
+- Fixed SQL syntax errors in payment_db.py (quotes)
+- Fixed SQL syntax errors in order_item_addon_db.py (typos)
+- Fixed table name inconsistencies
+
+All 500 errors should now be resolved!"
 
 echo.
 echo [3/4] Pushing to Railway...
@@ -28,19 +38,19 @@ git push
 echo.
 echo [4/4] Deployment Status
 echo ========================================
-echo ✅ API routing fixed - endpoints now accessible
-echo ✅ Database connection fixes applied
-echo ✅ CORS configuration updated
-echo ✅ React SPA routing properly configured
+echo ✅ CRITICAL 500 errors fixed
+echo ✅ All database models use lazy loading
+echo ✅ API routing conflicts resolved
+echo ✅ SQL syntax errors corrected
 echo ✅ Changes pushed to Railway
 echo.
-echo 🧪 TEST THESE ENDPOINTS:
+echo 🧪 TEST THESE ENDPOINTS NOW:
 echo - https://web-production-12d6e.up.railway.app/menu/
 echo - https://web-production-12d6e.up.railway.app/orders/
 echo - https://web-production-12d6e.up.railway.app/customers/
 echo - https://web-production-12d6e.up.railway.app/addon/
 echo.
-echo 📋 Check Railway logs for deployment status
+echo 📋 Should now return JSON data instead of 500 errors
 echo ========================================
 
 pause

@@ -4,7 +4,12 @@ from app.database.postgres_config import get_database_connection
 
 class OrderItemDb:
     def __init__(self):
-        try:
+        self.conn = None
+        self.cursor = None
+
+    def _get_connection(self):
+        """Lazy loading of database connection"""
+        if self.conn is None:
             self.conn = get_database_connection()
             if self.conn:
                 self.cursor = self.conn.cursor()
@@ -19,24 +24,12 @@ class OrderItemDb:
                     );
                 """)
                 self.conn.commit()
-        except Exception as e:
-            print(f"OrderItem database initialization failed: {e}")
-            self.conn = None
-            self.cursor = None
-
-        self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS order_items(
-                order_item_id SERIAL PRIMARY KEY,
-                order_id INT REFERENCES orders(order_id) ON DELETE CASCADE,
-                item_id INT REFERENCES menu_items(item_id) ON DELETE CASCADE,
-                quantity INT NOT NULL,
-                item_price NUMERIC(8,2) NOT NULL,
-                sub_total NUMERIC(8,2) NOT NULL
-            );
-        """)
-        self.conn.commit()
+        return self.conn
 
     def add_item_to_order(self, order_id, item_id, quantity):
+        if not self._get_connection():
+            return None
+            
         try:
             self.cursor.execute(
                 "SELECT status FROM orders WHERE order_id = %s",
@@ -80,6 +73,9 @@ class OrderItemDb:
             raise
 
     def get_item_to_order(self, order_id):
+        if not self._get_connection():
+            return []
+            
         self.cursor.execute(
             """
             SELECT oi.order_item_id,
@@ -98,9 +94,12 @@ class OrderItemDb:
         return self.cursor.fetchall()
 
     def update_item_to_order(self, order_item_id, new_quantity):
+        if not self._get_connection():
+            return False
+            
         try:
             self.cursor.execute(
-                "SELECT item_price FROM order_items WHERE order_item_id = %s",
+                "SELECT item_price, order_id FROM order_items WHERE order_item_id = %s",
                 (order_item_id,)
             )
 
@@ -131,12 +130,15 @@ class OrderItemDb:
             raise
 
     def remove_item_from_order(self, order_item_id):
+        if not self._get_connection():
+            return False
+            
         try:
             self.cursor.execute(
                 """
                 DELETE FROM order_items
                 WHERE order_item_id = %s
-                RETURNING order_item_id
+                RETURNING order_id
                 """,
                 (order_item_id,)
             )
@@ -153,6 +155,9 @@ class OrderItemDb:
             raise
 
     def calc_order_amount(self, order_id):
+        if not self._get_connection():
+            return 0.0
+            
         self.cursor.execute(
             """
             SELECT SUM(sub_total) AS total
@@ -165,6 +170,9 @@ class OrderItemDb:
         return float(row["total"] or 0)
     
     def recalc_order_amount(self, order_id):
+        if not self._get_connection():
+            return
+            
         self.cursor.execute(
             """
             UPDATE orders

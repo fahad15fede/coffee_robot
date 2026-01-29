@@ -5,7 +5,12 @@ from app.database.postgres_config import get_database_connection
 
 class PaymentDB:
     def __init__(self):
-        try:
+        self.conn = None
+        self.cursor = None
+
+    def _get_connection(self):
+        """Lazy loading of database connection"""
+        if self.conn is None:
             self.conn = get_database_connection()
             if self.conn:
                 self.cursor = self.conn.cursor()
@@ -23,12 +28,12 @@ class PaymentDB:
                     """
                 )
                 self.conn.commit()
-        except Exception as e:
-            print(f"Payment database initialization failed: {e}")
-            self.conn = None
-            self.cursor = None
+        return self.conn
     
     def create_payment(self, order_id, amount, method):
+        if not self._get_connection():
+            return None
+            
         try:
             self.cursor.execute(
                 """INSERT INTO payments (order_id, amount, method, status)
@@ -44,12 +49,14 @@ class PaymentDB:
             raise
 
     def mark_success(self, payment_id, transaction_ref):
+        if not self._get_connection():
+            return False
+            
         try: 
-
             self.cursor.execute(
                 """
                 UPDATE payments
-                SET status = "success",
+                SET status = 'success',
                     transaction_ref = %s
                 WHERE payment_id = %s
                 RETURNING payment_id
@@ -65,13 +72,16 @@ class PaymentDB:
         except Exception:
             self.conn.rollback()
             raise
+            
     def mark_failed(self, payment_id, reason = None):
+        if not self._get_connection():
+            return False
+            
         try: 
-
             self.cursor.execute(
                 """
                 UPDATE payments
-                SET status = "failed",
+                SET status = 'failed',
                     reason = %s
                 WHERE payment_id = %s
                 RETURNING payment_id
@@ -89,12 +99,16 @@ class PaymentDB:
             raise
 
     def payments_by_order(self, order_id):
+        if not self._get_connection():
+            return []
+            
         self.cursor.execute(
             """
             SELECT * FROM payments
             WHERE order_id = %s
-            ORDER BY created_at DESC"""
-        ),(order_id,)
+            ORDER BY created_at DESC""",
+            (order_id,)
+        )
 
         rows = self.cursor.fetchall()
 

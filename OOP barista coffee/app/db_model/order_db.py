@@ -6,27 +6,37 @@ from app.database.postgres_config import get_database_connection
 
 class OrderDb:
     def __init__(self):
-        self.conn = get_database_connection()
-        self.cursor = self.conn.cursor()
+        self.conn = None
+        self.cursor = None
 
-        self.cursor.execute(
-            """
-            CREATE TABLE IF NOT EXISTS orders (
-                order_id SERIAL PRIMARY KEY,
-                customer_id INT REFERENCES customers(customer_id) ON DELETE CASCADE,
-                status VARCHAR(50) NOT NULL,
-                total_amount NUMERIC(10,2) NOT NULL DEFAULT 0,
-                created_at TIMESTAMP DEFAULT NOW(),
-                updated_at TIMESTAMP DEFAULT NOW()
-            );
-            """
-        )
-        self.conn.commit()
+    def _get_connection(self):
+        """Lazy loading of database connection"""
+        if self.conn is None:
+            self.conn = get_database_connection()
+            if self.conn:
+                self.cursor = self.conn.cursor()
+                self.cursor.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS orders (
+                        order_id SERIAL PRIMARY KEY,
+                        customer_id INT REFERENCES customers(customer_id) ON DELETE CASCADE,
+                        status VARCHAR(50) NOT NULL,
+                        total_amount NUMERIC(10,2) NOT NULL DEFAULT 0,
+                        created_at TIMESTAMP DEFAULT NOW(),
+                        updated_at TIMESTAMP DEFAULT NOW()
+                    );
+                    """
+                )
+                self.conn.commit()
+        return self.conn
 
     # -----------------------
     # CREATE ORDER
     # -----------------------
     def create_order(self, customer_id):
+        if not self._get_connection():
+            return None
+            
         try:
             self.cursor.execute(
                 """
@@ -47,6 +57,9 @@ class OrderDb:
     # GET BASIC ORDER
     # -----------------------
     def get_order(self, order_id):
+        if not self._get_connection():
+            return None
+            
         self.cursor.execute(
             "SELECT * FROM orders WHERE order_id = %s;",
             (order_id,),
@@ -57,6 +70,9 @@ class OrderDb:
     # GET ALL ORDERS
     # -----------------------
     def get_all_orders(self):
+        if not self._get_connection():
+            return []
+            
         self.cursor.execute("SELECT * FROM orders;")
         rows = self.cursor.fetchall()
 
@@ -88,6 +104,9 @@ class OrderDb:
     # UPDATE ORDER STATUS
     # -----------------------
     def update_order_status(self, order_id, new_status):
+        if not self._get_connection():
+            return False, "Database connection failed"
+            
         self.cursor.execute(
             "SELECT status FROM orders WHERE order_id = %s;",
             (order_id,),
@@ -125,6 +144,9 @@ class OrderDb:
     # MARK ORDER AS PAID
     # -----------------------
     def mark_order_paid(self, order_id):
+        if not self._get_connection():
+            return False, "Database connection failed"
+            
         self.cursor.execute(
             "SELECT status FROM orders WHERE order_id = %s;",
             (order_id,),
@@ -155,6 +177,9 @@ class OrderDb:
     # DELETE ORDER
     # -----------------------
     def delete_order(self, order_id):
+        if not self._get_connection():
+            return False
+            
         try:
             self.cursor.execute(
                 "DELETE FROM orders WHERE order_id = %s RETURNING order_id;",
@@ -171,6 +196,9 @@ class OrderDb:
     # ORDER SUMMARY (WITH ITEMS)
     # -----------------------
     def get_order_summary(self, order_id):
+        if not self._get_connection():
+            return None
+            
         self.cursor.execute(
             "SELECT * FROM orders WHERE order_id = %s;",
             (order_id,),

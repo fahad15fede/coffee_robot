@@ -5,7 +5,12 @@ from app.database.postgres_config import get_database_connection
 
 class MenuItemDB:
     def __init__(self):
-        try:
+        self.conn = None
+        self.cursor = None
+
+    def _get_connection(self):
+        """Lazy loading of database connection"""
+        if self.conn is None:
             self.conn = get_database_connection()
             if self.conn:
                 self.cursor = self.conn.cursor()
@@ -18,52 +23,64 @@ class MenuItemDB:
                     );                
                     """)
                 self.conn.commit()
-        except Exception as e:
-            print(f"MenuItem database initialization failed: {e}")
-            self.conn = None
-            self.cursor = None
+        return self.conn
 
     def add_item(self, item: MenuItem):
-            self.cursor.execute("""
-                INSERT INTO menu_items (item_name, category, price)
-                VALUES (%s, %s, %s)
-                RETURNING item_id;
-            """, (item.item_name,item.category, item.price))
+        if not self._get_connection():
+            return None
+            
+        self.cursor.execute("""
+            INSERT INTO menu_items (item_name, category, price)
+            VALUES (%s, %s, %s)
+            RETURNING item_id;
+        """, (item.item_name,item.category, item.price))
 
-            new_id = self.cursor.fetchone()["item_id"]
-            self.conn.commit()
-            return new_id
+        new_id = self.cursor.fetchone()["item_id"]
+        self.conn.commit()
+        return new_id
     
     def update_item(self, item_id, name = None, category = None, price = None):
-            self.cursor.execute("""
-                UPDATE menu_items 
-                SET
-                    item_name = COALESCE(%s, item_name),
-                    category = COALESCE(%s, category),
-                    price = COALESCE(%s, price)
-                WHERE item_id = %s
-                RETURNING item_id;
-            """, (name,category, price, item_id))
-            updated = self.cursor.fetchone()
-            self.conn.commit()
-            return updated is not None
+        if not self._get_connection():
+            return False
+            
+        self.cursor.execute("""
+            UPDATE menu_items 
+            SET
+                item_name = COALESCE(%s, item_name),
+                category = COALESCE(%s, category),
+                price = COALESCE(%s, price)
+            WHERE item_id = %s
+            RETURNING item_id;
+        """, (name,category, price, item_id))
+        updated = self.cursor.fetchone()
+        self.conn.commit()
+        return updated is not None
 
     def get_item(self, item_id):
-            self.cursor.execute("""
-                SELECT * FROM menu_items WHERE item_id = %s;
-            """, (item_id,))
-
-            row = self.cursor.fetchone()
-            if row:
-                return MenuItem(row["item_id"], row["item_name"], row["category"], row["price"])
+        if not self._get_connection():
             return None
+            
+        self.cursor.execute("""
+            SELECT * FROM menu_items WHERE item_id = %s;
+        """, (item_id,))
+
+        row = self.cursor.fetchone()
+        if row:
+            return MenuItem(row["item_id"], row["item_name"], row["category"], row["price"])
+        return None
 
     def get_all_items(self):
-            self.cursor.execute("SELECT * FROM menu_items;")
-            rows = self.cursor.fetchall()
-            return [MenuItem(r["item_id"], r["item_name"],r["category"], r["price"]) for r in rows]
+        if not self._get_connection():
+            return []
+            
+        self.cursor.execute("SELECT * FROM menu_items;")
+        rows = self.cursor.fetchall()
+        return [MenuItem(r["item_id"], r["item_name"],r["category"], r["price"]) for r in rows]
     
     def delete_item(self, item_id):
+        if not self._get_connection():
+            return False
+            
         self.cursor.execute("""
             DELETE FROM menu_items WHERE item_id = %s RETURNING item_id;
         """, (item_id,))
