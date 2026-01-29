@@ -22,14 +22,23 @@ origins = [
     "http://localhost:3000",  # React dev server
     "https://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://web-production-12d6e.up.railway.app",  # Your actual Railway frontend URL
 ]
 
-# Add production domain when deployed
-railway_static_url = os.getenv("RAILWAY_STATIC_URL", "")
-if railway_static_url:
-    origins.append(f"https://{railway_static_url}")
-    origins.append(f"http://{railway_static_url}")
+# Get the current Railway domain from environment
+current_domain = os.getenv("RAILWAY_PUBLIC_DOMAIN") or os.getenv("RAILWAY_STATIC_URL")
+if current_domain:
+    origins.extend([
+        f"https://{current_domain}",
+        f"http://{current_domain}"
+    ])
+
+# Also allow the specific domain we know about
+origins.extend([
+    "https://web-production-12d6e.up.railway.app",
+    "http://web-production-12d6e.up.railway.app"
+])
+
+print(f"CORS Origins: {origins}")  # Debug logging
 
 app.add_middleware(
     CORSMiddleware,

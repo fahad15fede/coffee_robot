@@ -1,34 +1,40 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from app.model.add_ons import AddOn
+from app.database.postgres_config import get_database_connection
 
 class AddOnDb:
-    def __init__(self, host='localhost', database='coffee_robot', user='postgres', password='fahad15fede'):
-        self.conn = psycopg2.connect(
-            host=host,
-            user=user,
-            database=database,
-            password=password
-        )
-        self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
+    def __init__(self):
+        self.conn = None
+        self.cursor = None
 
-        self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS add_ons(
-                addon_id SERIAL PRIMARY KEY,
-                addon_name VARCHAR(100),
-                category VARCHAR(50),
-                available BOOLEAN DEFAULT TRUE,
-                price NUMERIC,
-                created_at TIMESTAMP DEFAULT NOW()
-            );
-        """)
-        self.conn.commit()
+    def _get_connection(self):
+        """Lazy loading of database connection"""
+        if self.conn is None:
+            self.conn = get_database_connection()
+            if self.conn:
+                self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
+                self.cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS add_ons(
+                        addon_id SERIAL PRIMARY KEY,
+                        addon_name VARCHAR(100),
+                        category VARCHAR(50),
+                        available BOOLEAN DEFAULT TRUE,
+                        price NUMERIC,
+                        created_at TIMESTAMP DEFAULT NOW()
+                    );
+                """)
+                self.conn.commit()
+        return self.conn
 
 
     # --------------------------------------------------------
     # CREATE
     # --------------------------------------------------------
     def add_addon(self, add_on: AddOn):
+        if not self._get_connection():
+            return None
+            
         self.cursor.execute("""
             INSERT INTO add_ons (addon_name, category, price, available)
             VALUES (%s, %s, %s, %s)
@@ -44,6 +50,9 @@ class AddOnDb:
     # READ SINGLE
     # --------------------------------------------------------
     def get_addon(self, addon_id):
+        if not self._get_connection():
+            return None
+            
         self.cursor.execute("""
             SELECT * FROM add_ons WHERE addon_id = %s;
         """, (addon_id,))
@@ -64,6 +73,9 @@ class AddOnDb:
     # READ ALL
     # --------------------------------------------------------
     def get_all_addons(self):
+        if not self._get_connection():
+            return []
+            
         self.cursor.execute("SELECT * FROM add_ons;")
         rows = self.cursor.fetchall()
         return [
@@ -76,6 +88,9 @@ class AddOnDb:
     # UPDATE
     # --------------------------------------------------------
     def update_addon(self, addon_id, name=None, category=None, price=None, available=None):
+        if not self._get_connection():
+            return False
+            
         self.cursor.execute("""
             UPDATE add_ons
             SET 
@@ -96,6 +111,9 @@ class AddOnDb:
     # DELETE
     # --------------------------------------------------------
     def delete_addon(self, addon_id):
+        if not self._get_connection():
+            return False
+            
         self.cursor.execute("""
             DELETE FROM add_ons WHERE addon_id = %s RETURNING addon_id;
         """, (addon_id,))
