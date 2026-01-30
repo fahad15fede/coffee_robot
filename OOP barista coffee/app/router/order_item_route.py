@@ -15,6 +15,7 @@ def get_db():
 # -------------------------------------------------
 @router.post("/add")
 def add_item_to_order(order_id: int, item_id: int, quantity: int):
+    db = get_db()
     new_id = db.add_item_to_order(order_id, item_id, quantity)
 
     if not new_id:
@@ -34,6 +35,7 @@ def add_item_to_order(order_id: int, item_id: int, quantity: int):
 # -------------------------------------------------
 @router.get("/order/{order_id}")
 def get_items_of_order(order_id: int):
+    db = get_db()
     items = db.get_item_to_order(order_id)
 
     if not items:
@@ -61,6 +63,7 @@ def get_items_of_order(order_id: int):
 # -------------------------------------------------
 @router.put("/update/{order_item_id}")
 def update_order_item(order_item_id: int, quantity: int):
+    db = get_db()
     success = db.update_item_to_order(order_item_id, quantity)
 
     if not success:
@@ -77,6 +80,7 @@ def update_order_item(order_item_id: int, quantity: int):
 # -------------------------------------------------
 @router.delete("/delete/{order_item_id}")
 def remove_order_item(order_item_id: int):
+    db = get_db()
     success = db.remove_item_from_order(order_item_id)
 
     if not success:
@@ -93,6 +97,7 @@ def remove_order_item(order_item_id: int):
 # -------------------------------------------------
 @router.get("/total/{order_id}")
 def calculate_order_total(order_id: int):
+    db = get_db()
     total = db.calc_order_amount(order_id)
 
     return {

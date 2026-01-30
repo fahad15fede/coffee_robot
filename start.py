@@ -10,10 +10,10 @@ def main():
     """Main application entry point"""
     try:
         # CRITICAL: Set DATABASE_URL for Railway PostgreSQL
-        if not os.getenv('DATABASE_URL'):
-            print("⚠️  DATABASE_URL not found in environment, setting manually...")
+        if not os.getenv('DATABASE_URL') or 'localhost' in os.getenv('DATABASE_URL', ''):
+            print("⚠️  DATABASE_URL not found or pointing to localhost, setting Railway URL...")
             os.environ['DATABASE_URL'] = "postgresql://postgres:asRanvYsGkSfSXDKNSBJtkaqGvyDbAiy@postgres.railway.internal:5432/railway"
-            print("✅ DATABASE_URL set manually")
+            print("✅ DATABASE_URL set to Railway PostgreSQL")
         else:
             print(f"✅ DATABASE_URL found: {os.getenv('DATABASE_URL')[:50]}...")
         
