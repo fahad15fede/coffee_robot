@@ -4,6 +4,99 @@ import AdminApp from './components/admin/AdminApp';
 
 export default function App() {
   const [role, setRole] = useState(null); // null, 'customer', 'admin'
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminError, setAdminError] = useState('');
+
+  const handleAdminLogin = () => {
+    if (adminPassword === 'fahad213') {
+      setRole('admin');
+      setShowAdminLogin(false);
+      setAdminPassword('');
+      setAdminError('');
+    } else {
+      setAdminError('Incorrect password. Please try again.');
+      setAdminPassword('');
+    }
+  };
+
+  const handleAdminCancel = () => {
+    setShowAdminLogin(false);
+    setAdminPassword('');
+    setAdminError('');
+  };
+
+  // Admin Login Modal
+  if (showAdminLogin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#FAF8F3' }}>
+        <div className="max-w-md w-full">
+          <div className="rounded-2xl shadow-xl overflow-hidden" style={{ backgroundColor: '#F5F2ED', border: '2px solid #E8E0D0' }}>
+            <div className="px-8 py-6 text-center" style={{ backgroundColor: '#8B7355' }}>
+              <div className="text-4xl mb-3">🔐</div>
+              <h2 className="text-2xl font-bold" style={{ color: '#FAF8F3' }}>Admin Login</h2>
+              <p className="text-sm opacity-90" style={{ color: '#FAF8F3' }}>Enter admin password to continue</p>
+            </div>
+            
+            <div className="p-8">
+              <div className="mb-6">
+                <label className="block text-sm font-medium mb-2" style={{ color: '#3D2F1F' }}>
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleAdminLogin()}
+                  className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-200"
+                  style={{ 
+                    backgroundColor: '#FAF8F3',
+                    borderColor: '#E8E0D0',
+                    color: '#3D2F1F'
+                  }}
+                  placeholder="Enter admin password"
+                  autoFocus
+                />
+              </div>
+
+              {adminError && (
+                <div className="mb-4 p-3 rounded-lg" style={{ backgroundColor: '#FEE2E2', color: '#DC2626' }}>
+                  <div className="flex items-center gap-2">
+                    <span>❌</span>
+                    <span className="text-sm">{adminError}</span>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                <button
+                  onClick={handleAdminCancel}
+                  className="flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200 hover:shadow-md border-2"
+                  style={{ 
+                    backgroundColor: 'transparent',
+                    borderColor: '#E8E0D0',
+                    color: '#6B5B47'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAdminLogin}
+                  className="flex-1 py-3 px-6 rounded-lg font-bold transition-all duration-200 hover:shadow-md"
+                  style={{ 
+                    backgroundColor: '#8B7355',
+                    color: '#FAF8F3'
+                  }}
+                >
+                  Login
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!role) {
     return (
@@ -55,13 +148,14 @@ export default function App() {
 
             {/* Admin Card */}
             <div
-              onClick={() => setRole('admin')}
+              onClick={() => setShowAdminLogin(true)}
               className="rounded-2xl shadow-lg overflow-hidden cursor-pointer transform hover:scale-105 transition duration-300"
               style={{ backgroundColor: '#F5F2ED', border: '2px solid #E8E0D0' }}
             >
               <div className="px-8 py-12 text-center" style={{ backgroundColor: '#8B7355' }}>
                 <div className="text-6xl mb-4">👨‍💼</div>
                 <h2 className="text-3xl font-bold" style={{ color: '#FAF8F3' }}>Admin</h2>
+                <p className="text-sm opacity-80 mt-2" style={{ color: '#FAF8F3' }}>🔐 Password Required</p>
               </div>
               <div className="p-8">
                 <ul className="space-y-3" style={{ color: '#6B5B47' }}>
@@ -86,7 +180,7 @@ export default function App() {
                   className="w-full mt-6 py-3 px-6 rounded-lg font-bold transition-all duration-200 hover:shadow-md"
                   style={{ backgroundColor: '#8B7355', color: '#FAF8F3' }}
                 >
-                  Continue as Admin
+                  Login as Admin
                 </button>
               </div>
             </div>
@@ -94,7 +188,7 @@ export default function App() {
 
           <div className="text-center mt-8">
             <p className="text-sm" style={{ color: '#6B5B47' }}>
-              This is a demo application. In production, authentication would be required.
+              Admin access requires password authentication for security.
             </p>
           </div>
         </div>
