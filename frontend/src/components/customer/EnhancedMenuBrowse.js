@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PaymentModal from './PaymentModal';
 
-// Import images
+// Import images and videos
 import bg2 from '../../assets/bg2.avif';
 import americano from '../../assets/americano.png';
 import cappuccino from '../../assets/Cappuccino.jpg';
@@ -12,6 +12,14 @@ import teaHot from '../../assets/tea_hot.png';
 import brownie from '../../assets/brownie.jpg';
 import doughnut from '../../assets/doughnut.png';
 import lemonade from '../../assets/lemonade.png';
+
+// New items
+import blackTeaVideo from '../../assets/black_tea.mp4';
+import brownBiscuits from '../../assets/brwon_biscuits.jpg';
+import chocolateSyrup from '../../assets/chocolate syrup.jpg';
+import chilledLatte from '../../assets/chilled_latte.webp';
+import chilledMocha from '../../assets/chilled mocha.jpg';
+import whiteBread from '../../assets/white bread plain.jpg';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
@@ -26,14 +34,39 @@ const itemImages = {
   'brownie': brownie,
   'doughnut': doughnut,
   'lemonade': lemonade,
+  // New items
+  'black tea': blackTeaVideo,
+  'brown biscuit': brownBiscuits,
+  'biscuit': brownBiscuits,
+  'chocolate syrup': chocolateSyrup,
+  'syrup': chocolateSyrup,
+  'chilled latte': chilledLatte,
+  'iced latte': chilledLatte,
+  'cold latte': chilledLatte,
+  'chilled mocha': chilledMocha,
+  'iced mocha': chilledMocha,
+  'cold mocha': chilledMocha,
+  'white bread': whiteBread,
+  'plain bread': whiteBread,
+  'bread': whiteBread,
 };
 
 const getItemImage = (itemName) => {
   const name = itemName.toLowerCase();
+  // Check for exact matches first
+  if (itemImages[name]) return itemImages[name];
+  
+  // Then check for partial matches
   for (const [key, image] of Object.entries(itemImages)) {
     if (name.includes(key)) return image;
   }
   return cappuccino; // Default image
+};
+
+// Check if item should be displayed as video
+const isVideoItem = (itemName) => {
+  const name = itemName.toLowerCase();
+  return name.includes('black tea');
 };
 
 export default function EnhancedMenuBrowse({ customer, onPlaceOrder }) {
@@ -542,12 +575,25 @@ function MenuItem({ item, addOns, onAddToCart, onAddToCartWithAddOns, viewMode, 
   };
 
   const itemImage = getItemImage(item.item_name);
+  const isVideo = isVideoItem(item.item_name);
 
   if (viewMode === 'list') {
     return (
       <div className="bg-white rounded-lg shadow-md overflow-hidden border border-amber-200 hover:shadow-lg transition-all duration-300 flex"
         style={{animationDelay: `${index * 0.05}s`}}>
-        <img src={itemImage} alt={item.item_name} className="w-24 h-24 object-cover" />
+        {isVideo ? (
+          <video 
+            src={itemImage} 
+            alt={item.item_name} 
+            className="w-24 h-24 object-cover"
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+        ) : (
+          <img src={itemImage} alt={item.item_name} className="w-24 h-24 object-cover" />
+        )}
         <div className="flex-1 p-2 flex justify-between items-center">
           <div>
             <h3 className="text-sm font-bold text-amber-900">{item.item_name}</h3>
@@ -570,16 +616,33 @@ function MenuItem({ item, addOns, onAddToCart, onAddToCartWithAddOns, viewMode, 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden border border-amber-200 hover:shadow-lg hover:border-amber-400 transition-all duration-300"
       style={{animationDelay: `${index * 0.1}s`}}>
-      {/* Image */}
+      {/* Image or Video */}
       <div className="relative h-32 overflow-hidden bg-gradient-to-br from-amber-100 to-orange-100">
-        <img 
-          src={itemImage} 
-          alt={item.item_name} 
-          className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-        />
+        {isVideo ? (
+          <video 
+            src={itemImage} 
+            alt={item.item_name} 
+            className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+        ) : (
+          <img 
+            src={itemImage} 
+            alt={item.item_name} 
+            className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+          />
+        )}
         <div className="absolute top-1 right-1 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full">
           <span className="text-amber-900 font-bold text-xs">{item.category}</span>
         </div>
+        {isVideo && (
+          <div className="absolute bottom-1 left-1 bg-black/50 backdrop-blur-sm px-2 py-0.5 rounded-full">
+            <span className="text-white text-xs">🎥</span>
+          </div>
+        )}
       </div>
 
       <div className="p-2">
