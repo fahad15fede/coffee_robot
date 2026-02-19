@@ -21,7 +21,7 @@ import chilledLatte from '../../assets/chilled_latte.webp';
 import chilledMocha from '../../assets/chilled mocha.jpg';
 import whiteBread from '../../assets/white bread plain.jpg';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://web-production-12d6e.up.railway.app';
 
 // Image mapping for menu items
 const itemImages = {
