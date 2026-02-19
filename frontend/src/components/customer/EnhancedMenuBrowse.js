@@ -445,6 +445,8 @@ export default function EnhancedMenuBrowse({ customer, onPlaceOrder }) {
                       onAddToCartWithAddOns={addToCartWithAddOns}
                       viewMode={viewMode}
                       index={index}
+                      imageLoadingStates={imageLoadingStates}
+                      setImageLoadingStates={setImageLoadingStates}
                     />
                   ))}
                 </div>
@@ -557,7 +559,7 @@ export default function EnhancedMenuBrowse({ customer, onPlaceOrder }) {
   );
 }
 
-function MenuItem({ item, addOns, onAddToCart, onAddToCartWithAddOns, viewMode, index }) {
+function MenuItem({ item, addOns, onAddToCart, onAddToCartWithAddOns, viewMode, index, imageLoadingStates, setImageLoadingStates }) {
   const [showAddOns, setShowAddOns] = useState(false);
   const [selectedAddOns, setSelectedAddOns] = useState([]);
 
