@@ -81,6 +81,7 @@ export default function EnhancedMenuBrowse({ customer, onPlaceOrder }) {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState(null);
   const [sortBy, setSortBy] = useState('name'); // 'name', 'price-low', 'price-high'
+  const [imageLoadingStates, setImageLoadingStates] = useState({});
 
   useEffect(() => {
     fetchMenuItems();
@@ -312,9 +313,11 @@ export default function EnhancedMenuBrowse({ customer, onPlaceOrder }) {
                 </h1>
                 <p className="text-amber-200 text-xs">Welcome, {customer.name}!</p>
               </div>
-              <div className="bg-white/20 backdrop-blur-lg px-2 py-1 rounded-lg border border-white/30">
-                <p className="text-amber-200 text-xs">Cart</p>
-                <p className="text-lg font-bold text-center">{cart.length}</p>
+              <div className="flex items-center gap-3">
+                <div className="bg-white/20 backdrop-blur-lg px-2 py-1 rounded-lg border border-white/30">
+                  <p className="text-amber-200 text-xs">Cart</p>
+                  <p className="text-lg font-bold text-center">{cart.length}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -576,24 +579,47 @@ function MenuItem({ item, addOns, onAddToCart, onAddToCartWithAddOns, viewMode, 
 
   const itemImage = getItemImage(item.item_name);
   const isVideo = isVideoItem(item.item_name);
+  const isImageLoading = imageLoadingStates[item.item_id] !== false;
+
+  const handleImageLoad = () => {
+    setImageLoadingStates(prev => ({ ...prev, [item.item_id]: false }));
+  };
+
+  const handleImageError = () => {
+    setImageLoadingStates(prev => ({ ...prev, [item.item_id]: false }));
+  };
 
   if (viewMode === 'list') {
     return (
       <div className="bg-white rounded-lg shadow-md overflow-hidden border border-amber-200 hover:shadow-lg transition-all duration-300 flex"
         style={{animationDelay: `${index * 0.05}s`}}>
-        {isVideo ? (
-          <video 
-            src={itemImage} 
-            alt={item.item_name} 
-            className="w-24 h-24 object-cover"
-            autoPlay
-            loop
-            muted
-            playsInline
-          />
-        ) : (
-          <img src={itemImage} alt={item.item_name} className="w-24 h-24 object-cover" />
-        )}
+        <div className="relative w-24 h-24">
+          {/* Loading skeleton */}
+          {isImageLoading && (
+            <div className="absolute inset-0 bg-gradient-to-r from-amber-100 via-amber-200 to-amber-100 animate-pulse" />
+          )}
+          {isVideo ? (
+            <video 
+              src={itemImage} 
+              alt={item.item_name} 
+              className={`w-full h-full object-cover ${isImageLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+              autoPlay
+              loop
+              muted
+              playsInline
+              onLoadedData={handleImageLoad}
+              onError={handleImageError}
+            />
+          ) : (
+            <img 
+              src={itemImage} 
+              alt={item.item_name} 
+              className={`w-full h-full object-cover ${isImageLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+            />
+          )}
+        </div>
         <div className="flex-1 p-2 flex justify-between items-center">
           <div>
             <h3 className="text-sm font-bold text-amber-900">{item.item_name}</h3>
@@ -618,27 +644,42 @@ function MenuItem({ item, addOns, onAddToCart, onAddToCartWithAddOns, viewMode, 
       style={{animationDelay: `${index * 0.1}s`}}>
       {/* Image or Video */}
       <div className="relative h-32 overflow-hidden bg-gradient-to-br from-amber-100 to-orange-100">
+        {/* Loading skeleton with coffee animation */}
+        {isImageLoading && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="relative">
+              {/* Animated coffee cup */}
+              <div className="text-4xl animate-bounce">☕</div>
+              {/* Shimmer effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+            </div>
+          </div>
+        )}
         {isVideo ? (
           <video 
             src={itemImage} 
             alt={item.item_name} 
-            className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+            className={`w-full h-full object-cover hover:scale-110 transition-transform duration-500 ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
             autoPlay
             loop
             muted
             playsInline
+            onLoadedData={handleImageLoad}
+            onError={handleImageError}
           />
         ) : (
           <img 
             src={itemImage} 
             alt={item.item_name} 
-            className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+            className={`w-full h-full object-cover hover:scale-110 transition-transform duration-500 ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
           />
         )}
         <div className="absolute top-1 right-1 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full">
           <span className="text-amber-900 font-bold text-xs">{item.category}</span>
         </div>
-        {isVideo && (
+        {isVideo && !isImageLoading && (
           <div className="absolute bottom-1 left-1 bg-black/50 backdrop-blur-sm px-2 py-0.5 rounded-full">
             <span className="text-white text-xs">🎥</span>
           </div>
