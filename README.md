@@ -46,8 +46,7 @@
 ## 🚀 Live Demo
 
 ### 🌐 **Try It Now**
-- **Frontend**: [https://coffee-robot-demo.vercel.app](https://your-vercel-url.vercel.app)
-- **API**: [https://coffee-robot-api.onrender.com](https://your-render-url.onrender.com)
+- **Frontend + API**: [https://coffee-robot-demo.vercel.app]([https://your-vercel-url.vercel.app](https://web-production-12d6e.up.railway.app/)) 
 
 ### 🧪 **Test Accounts**
 ```
