@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PaymentModal from './PaymentModal';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://web-production-12d6e.up.railway.app';
 
 export default function MyOrders({ customer, onBack }) {
   const [orders, setOrders] = useState([]);

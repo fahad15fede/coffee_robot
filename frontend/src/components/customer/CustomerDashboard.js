@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://web-production-12d6e.up.railway.app';
 
 export default function CustomerDashboard({ customer, onNavigate, onLogout }) {
   const [myOrders, setMyOrders] = useState([]);
@@ -164,7 +164,9 @@ export default function CustomerDashboard({ customer, onNavigate, onLogout }) {
               </div>
               <div>
                 <p className="text-sm font-medium mb-1" style={{ color: '#6B5B47' }}>Loyalty Points</p>
-                <p className="text-2xl font-bold" style={{ color: '#3D2F1F' }}>{stats.totalOrders * 10}</p>
+                <p className="text-2xl font-bold" style={{ color: '#3D2F1F'
+
+                 }}>{stats.totalOrders * 10}</p>
               </div>
             </div>
           </div>
