@@ -197,22 +197,7 @@ export default function App() {
   }
 
   if (role === 'customer') {
-    return (
-      <div>
-        <button
-          onClick={() => setRole(null)}
-          className="fixed top-16 right-4 z-[100] px-3 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-md text-sm shadow-sm sm:top-4 sm:right-32"
-          style={{ 
-            backgroundColor: '#CCB26C', 
-            color: '#3D2F1F',
-            border: '1px solid rgba(61, 47, 31, 0.2)'
-          }}
-        >
-          ← Change Role
-        </button>
-        <CustomerApp />
-      </div>
-    );
+    return <CustomerApp onChangeRole={() => setRole(null)} />;
   }
 
   if (role === 'admin') {

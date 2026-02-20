@@ -3,7 +3,7 @@ import coffeeVideo from '../../assets/cream_poured_coffee.mp4';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://web-production-12d6e.up.railway.app';
 
-export default function CustomerRegistrationNew({ onRegister }) {
+export default function CustomerRegistrationNew({ onRegister, onChangeRole }) {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -105,6 +105,21 @@ export default function CustomerRegistrationNew({ onRegister }) {
           <div className="absolute top-40 right-10 w-72 h-72 bg-orange-400 rounded-full mix-blend-multiply filter blur-xl animate-float" style={{animationDelay: '1s'}}></div>
           <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-yellow-400 rounded-full mix-blend-multiply filter blur-xl animate-float" style={{animationDelay: '2s'}}></div>
         </div>
+
+        {/* Change Role Button - Only on mode selection screen */}
+        {onChangeRole && (
+          <button
+            onClick={onChangeRole}
+            className="fixed top-4 right-4 z-[100] px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-md text-sm shadow-sm"
+            style={{ 
+              backgroundColor: '#CCB26C', 
+              color: '#3D2F1F',
+              border: '1px solid rgba(61, 47, 31, 0.2)'
+            }}
+          >
+            ← Change Role
+          </button>
+        )}
 
         {/* Content */}
         <div className="relative z-10 min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">

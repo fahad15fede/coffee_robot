@@ -7,7 +7,7 @@ import MyOrders from './MyOrders';
 import Deals from './Deals';
 import PaymentHistory from './PaymentHistory';
 
-export default function CustomerApp() {
+export default function CustomerApp({ onChangeRole }) {
   const [customer, setCustomer] = useState(null);
   const [currentOrderId, setCurrentOrderId] = useState(null);
   const [view, setView] = useState('registration'); // registration, dashboard, menu, confirmation, orders, deals, payments
@@ -42,7 +42,7 @@ export default function CustomerApp() {
   };
 
   if (view === 'registration') {
-    return <CustomerRegistrationNew onRegister={handleRegister} />;
+    return <CustomerRegistrationNew onRegister={handleRegister} onChangeRole={onChangeRole} />;
   }
 
   if (view === 'dashboard') {
@@ -60,9 +60,10 @@ export default function CustomerApp() {
       <div>
         <button
           onClick={handleBackToDashboard}
-          className="fixed top-4 left-4 z-50 bg-white hover:bg-gray-100 text-amber-900 font-semibold py-2 px-4 rounded-lg shadow-lg border-2 border-amber-300 transition"
+          className="fixed top-4 left-4 z-50 bg-white/90 hover:bg-white text-amber-900 font-bold p-3 rounded-lg shadow-lg border-2 border-amber-300 transition-all duration-200 hover:scale-110"
+          style={{ width: '48px', height: '48px' }}
         >
-          ← Dashboard
+          ←
         </button>
         <EnhancedMenuBrowse customer={customer} onPlaceOrder={handlePlaceOrder} />
       </div>
