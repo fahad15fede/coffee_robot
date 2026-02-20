@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Coffee Shop Management System",
   "scripts": {
-    "build": "cd frontend && npm install && npm run build",
-    "start": "cd 'OOP barista coffee' && python3 -m uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    "build": "node init && cd frontend && npm install && npm run build",
+    "start": "node init && cd 'OOP barista coffee' && python3 -m uvicorn app.main:app --host 0.0.0.0 --port $PORT"
   },
   "engines": {
     "node": ">=18.0.0",
